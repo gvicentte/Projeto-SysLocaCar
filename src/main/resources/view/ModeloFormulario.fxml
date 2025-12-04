@@ -12,16 +12,31 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
 
+<?import javafx.scene.control.DatePicker?>
 <BorderPane prefHeight="750.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.projetosyslocacar.controller.MainViewController">
 
     <left>
         <VBox fx:id="vBoxMenuLateral" prefWidth="150.0" spacing="15.0" style="-fx-background-color: #f4f4f4; -fx-padding: 15;">
             <children>
-                <Label text="GERENCIAMENTO" style="-fx-font-weight: bold; -fx-font-size: 14px;" />
+                <Label text="VEÍCULOS" style="-fx-font-weight: bold; -fx-font-size: 14px;" />
                 <Button fx:id="btnModelos" text="Modelos" prefWidth="130.0" onAction="#handleNavegacao" />
                 <Button fx:id="btnMarcas" text="Marcas" prefWidth="130.0" onAction="#handleNavegacao" />
                 <Button fx:id="btnCategorias" text="Categorias" prefWidth="130.0" onAction="#handleNavegacao" />
                 <Button fx:id="btnVeiculos" text="Veículos" prefWidth="130.0" onAction="#handleNavegacao" />
+
+                <Label text="PESSOAS" style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 15 0 0 0;" />
+                <Button fx:id="btnClientes" text="Clientes" prefWidth="130.0" onAction="#handleNavegacao" />
+                <Button fx:id="btnFuncionarios" text="Funcionários" prefWidth="130.0" onAction="#handleNavegacao" />
+                <Button fx:id="btnUsuarios" text="Usuários" prefWidth="130.0" onAction="#handleNavegacao" />
+
+                <Label text="TRANSAÇÕES" style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 15 0 0 0;" />
+                <Button fx:id="btnContratos" text="Contratos" prefWidth="130.0" onAction="#handleNavegacao" />
+                <Button fx:id="btnLocacoes" text="Locações" prefWidth="130.0" onAction="#handleNavegacao" />
+                <Button fx:id="btnPagamentos" text="Pagamentos" prefWidth="130.0" onAction="#handleNavegacao" />
+
+                <Label text="REGISTROS" style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 15 0 0 0;" />
+                <Button fx:id="btnManutencao" text="Manutenção" prefWidth="130.0" onAction="#handleNavegacao" />
+                <Button fx:id="btnOcorrencias" text="Ocorrências" prefWidth="130.0" onAction="#handleNavegacao" />
             </children>
         </VBox>
     </left>
@@ -31,29 +46,22 @@
 
             <VBox fx:id="containerModelos" spacing="15.0">
                 <Label text="Cadastro e Listagem de Modelos" style="-fx-font-size: 16pt;" />
-
                 <GridPane hgap="10.0" vgap="10.0">
                     <children>
                         <Label text="ID:" GridPane.rowIndex="0" />
                         <TextField fx:id="txtIdModelo" editable="false" promptText="Gerado Automaticamente" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-
                         <Label text="Nome do Modelo:" GridPane.rowIndex="1" />
                         <TextField fx:id="txtNomeModelo" promptText="Ex: Onix 1.0, Civic LX" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-
                         <Label text="Ano (ou Data):" GridPane.rowIndex="2" />
                         <TextField fx:id="txtAnoModelo" promptText="Ex: 2024" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-
                         <Label text="Marca:" GridPane.rowIndex="3" />
                         <ComboBox fx:id="cmbMarcaModelo" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-
                         <Label text="Categoria:" GridPane.rowIndex="4" />
                         <ComboBox fx:id="cmbCategoriaModelo" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-
                         <Label text="ID do Modelo (Código):" GridPane.rowIndex="5" />
                         <TextField fx:id="txtCodModelo" promptText="Código interno" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                     </children>
                 </GridPane>
-
                 <HBox alignment="CENTER_RIGHT" spacing="10.0">
                     <children>
                         <Button mnemonicParsing="false" onAction="#handleAtualizarListaModelo" text="Atualizar Lista" />
@@ -61,9 +69,7 @@
                         <Button mnemonicParsing="false" onAction="#handleLimparFormularioModelo" text="Novo Cadastro" />
                     </children>
                 </HBox>
-
                 <Label text="Modelos Cadastrados (Galeria)" style="-fx-font-size: 12pt; -fx-font-weight: bold;" />
-
                 <TableView fx:id="tabelaModelos" VBox.vgrow="ALWAYS" prefHeight="300.0">
                     <columns>
                         <TableColumn fx:id="colIdModelo" prefWidth="50.0" text="ID" />
@@ -72,14 +78,12 @@
                         <TableColumn fx:id="colMarcaModelo" prefWidth="120.0" text="Marca" />
                         <TableColumn fx:id="colCategoriaModelo" prefWidth="120.0" text="Categoria" />
                         <TableColumn fx:id="colCodModeloTabela" prefWidth="80.0" text="Cód." />
-
                         <TableColumn fx:id="colAcoesModelo" prefWidth="150.0" text="Ações" />
                     </columns>
                     <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                     </columnResizePolicy>
                 </TableView>
-
                 <HBox alignment="CENTER_LEFT" spacing="10.0">
                     <children>
                         <Button mnemonicParsing="false" onAction="#handleEditarModelo" text="Editar Selecionado" />
@@ -146,27 +150,20 @@
                 <GridPane hgap="10.0" vgap="10.0">
                     <Label text="ID:" GridPane.rowIndex="0" />
                     <TextField fx:id="txtIdVeiculo" editable="false" promptText="Gerado Automaticamente" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-
                     <Label text="Placa:" GridPane.rowIndex="1" />
                     <TextField fx:id="txtPlacaVeiculo" promptText="Ex: ABC-1234" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-
                     <Label text="Chassi:" GridPane.rowIndex="2" />
                     <TextField fx:id="txtChassiVeiculo" promptText="Ex: 9BW..." GridPane.columnIndex="1" GridPane.rowIndex="2" />
-
                     <Label text="KM (String):" GridPane.rowIndex="3" />
                     <TextField fx:id="txtKmVeiculo" promptText="Ex: 50.000" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-
                     <Label text="Cor:" GridPane.rowIndex="4" />
                     <TextField fx:id="txtCorVeiculo" promptText="Ex: Preto" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-
                     <Label text="Marca do Veículo:" GridPane.rowIndex="5" />
                     <ComboBox fx:id="cmbMarcaVeiculo" prefWidth="250.0"
                               onAction="#handleMarcaSelecionadaVeiculo"
                               GridPane.columnIndex="1" GridPane.rowIndex="5" />
-
                     <Label text="Modelo:" GridPane.rowIndex="6" />
                     <ComboBox fx:id="cmbModeloVeiculo" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-
                     <Label text="Status:" GridPane.rowIndex="7" />
                     <ComboBox fx:id="cmbStatusVeiculo" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                 </GridPane>
@@ -191,6 +188,276 @@
                 </TableView>
             </VBox>
 
+            <VBox fx:id="containerClientes" visible="false" managed="false" spacing="15.0">
+                <Label text="Cadastro e Listagem de Clientes" style="-fx-font-size: 16pt;" />
+                <GridPane hgap="10.0" vgap="10.0">
+                    <Label text="ID:" GridPane.rowIndex="0" />
+                    <TextField fx:id="txtIdCliente" editable="false" promptText="Gerado Automaticamente" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                    <Label text="Nome:" GridPane.rowIndex="1" />
+                    <TextField fx:id="txtNomeCliente" promptText="Nome completo" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                    <Label text="CPF:" GridPane.rowIndex="2" />
+                    <TextField fx:id="txtCpfCliente" promptText="000.000.000-00" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    <Label text="CNH:" GridPane.rowIndex="3" />
+                    <TextField fx:id="txtCnhCliente" promptText="Registro CNH" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                    <Label text="RG:" GridPane.rowIndex="4" />
+                    <TextField fx:id="txtRgCliente" promptText="Registro Geral" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                    <Label text="Email:" GridPane.rowIndex="5" />
+                    <TextField fx:id="txtEmailCliente" promptText="email@dominio.com" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+
+                    <Label text="CEP:" GridPane.rowIndex="6" />
+                    <TextField fx:id="txtCepCliente" promptText="00000-000" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                    <Label text="Logradouro:" GridPane.rowIndex="7" />
+                    <TextField fx:id="txtLogradouroCliente" promptText="Rua/Avenida" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                    <Label text="Número:" GridPane.rowIndex="8" />
+                    <TextField fx:id="txtNumeroCliente" promptText="123" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                </GridPane>
+                <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                    <Button mnemonicParsing="false" onAction="#handleAtualizarListaCliente" text="Atualizar Lista" />
+                    <Button mnemonicParsing="false" onAction="#handleSalvarCliente" text="Salvar/Atualizar" />
+                    <Button mnemonicParsing="false" onAction="#handleLimparFormularioCliente" text="Novo Cadastro" />
+                    <Button mnemonicParsing="false" onAction="#handleDeletarCliente" text="Deletar Selecionado" />
+                </HBox>
+                <TableView fx:id="tabelaClientes" VBox.vgrow="ALWAYS" prefHeight="300.0">
+                    <columns>
+                        <TableColumn fx:id="colIdCliente" prefWidth="50.0" text="ID" />
+                        <TableColumn fx:id="colNomeCliente" prefWidth="150.0" text="Nome" />
+                        <TableColumn fx:id="colCpfCliente" prefWidth="100.0" text="CPF" />
+                        <TableColumn fx:id="colRgCliente" prefWidth="100.0" text="CPF" />
+                        <TableColumn fx:id="colCnhCliente" prefWidth="100.0" text="CNH" />
+                        <TableColumn fx:id="colEmailCliente" prefWidth="100.0" text="CNH" />
+                        <TableColumn fx:id="colLogradouroCliente" prefWidth="150.0" text="Logradouro" />
+                    </columns>
+                    <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
+                </TableView>
+            </VBox>
+            <!--
+            <VBox fx:id="containerFuncionarios" visible="false" managed="false" spacing="15.0">
+                <Label text="Cadastro e Listagem de Funcionários" style="-fx-font-size: 16pt;" />
+                <GridPane hgap="10.0" vgap="10.0">
+                    <Label text="ID:" GridPane.rowIndex="0" />
+                    <TextField fx:id="txtIdFuncionario" editable="false" promptText="Gerado Automaticamente" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                    <Label text="Nome:" GridPane.rowIndex="1" />
+                    <TextField fx:id="txtNomeFuncionario" promptText="Nome completo" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                    <Label text="Matrícula:" GridPane.rowIndex="2" />
+                    <TextField fx:id="txtMatriculaFuncionario" promptText="Matrícula Interna" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    <Label text="CPF:" GridPane.rowIndex="3" />
+                    <TextField fx:id="txtCpfFuncionario" promptText="000.000.000-00" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                    <Label text="Logradouro:" GridPane.rowIndex="4" />
+                    <TextField fx:id="txtLogradouroFuncionario" promptText="Rua/Avenida (Endereço)" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                </GridPane>
+                <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                    <Button mnemonicParsing="false" onAction="#handleAtualizarListaFuncionario" text="Atualizar Lista" />
+                    <Button mnemonicParsing="false" onAction="#handleSalvarFuncionario" text="Salvar/Atualizar" />
+                    <Button mnemonicParsing="false" onAction="#handleLimparFormularioFuncionario" text="Novo Cadastro" />
+                    <Button mnemonicParsing="false" onAction="#handleDeletarFuncionario" text="Deletar Selecionado" />
+                </HBox>
+                <TableView fx:id="tabelaFuncionarios" VBox.vgrow="ALWAYS" prefHeight="300.0">
+                    <columns>
+                        <TableColumn fx:id="colIdFuncionario" prefWidth="50.0" text="ID" />
+                        <TableColumn fx:id="colNomeFuncionario" prefWidth="150.0" text="Nome" />
+                        <TableColumn fx:id="colMatriculaFuncionario" prefWidth="100.0" text="Matrícula" />
+                        <TableColumn fx:id="colLogradouroFuncionario" prefWidth="150.0" text="Logradouro" />
+                    </columns>
+                    <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
+                </TableView>
+            </VBox>
+
+            <VBox fx:id="containerUsuarios" visible="false" managed="false" spacing="15.0">
+                <Label text="Cadastro e Listagem de Usuários" style="-fx-font-size: 16pt;" />
+                <GridPane hgap="10.0" vgap="10.0">
+                    <Label text="ID:" GridPane.rowIndex="0" />
+                    <TextField fx:id="txtIdUsuario" editable="false" promptText="Gerado Automaticamente" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                    <Label text="Nome:" GridPane.rowIndex="1" />
+                    <TextField fx:id="txtNomeUsuario" promptText="Nome completo" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                    <Label text="CPF:" GridPane.rowIndex="2" />
+                    <TextField fx:id="txtCpfUsuario" promptText="000.000.000-00" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    <Label text="Login:" GridPane.rowIndex="3" />
+                    <TextField fx:id="txtLoginUsuario" promptText="Nome de usuário" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                    <Label text="Senha:" GridPane.rowIndex="4" />
+                    <TextField fx:id="txtSenhaUsuario" promptText="Senha" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                </GridPane>
+                <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                    <Button mnemonicParsing="false" onAction="#handleAtualizarListaUsuario" text="Atualizar Lista" />
+                    <Button mnemonicParsing="false" onAction="#handleSalvarUsuario" text="Salvar/Atualizar" />
+                    <Button mnemonicParsing="false" onAction="#handleLimparFormularioUsuario" text="Novo Cadastro" />
+                    <Button mnemonicParsing="false" onAction="#handleDeletarUsuario" text="Deletar Selecionado" />
+                </HBox>
+                <TableView fx:id="tabelaUsuarios" VBox.vgrow="ALWAYS" prefHeight="300.0">
+                    <columns>
+                        <TableColumn fx:id="colIdUsuario" prefWidth="50.0" text="ID" />
+                        <TableColumn fx:id="colNomeUsuario" prefWidth="150.0" text="Nome" />
+                        <TableColumn fx:id="colLoginUsuario" prefWidth="100.0" text="Login" />
+                        <TableColumn fx:id="colCpfUsuario" prefWidth="100.0" text="CPF" />
+                    </columns>
+                    <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
+                </TableView>
+            </VBox>
+
+            <VBox fx:id="containerContratos" visible="false" managed="false" spacing="15.0">
+                <Label text="Cadastro e Listagem de Contratos de Locação" style="-fx-font-size: 16pt;" />
+                <GridPane hgap="10.0" vgap="10.0">
+                    <Label text="ID:" GridPane.rowIndex="0" />
+                    <TextField fx:id="txtIdContrato" editable="false" promptText="Gerado Automaticamente" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                    <Label text="Cliente:" GridPane.rowIndex="1" />
+                    <ComboBox fx:id="cmbClienteContrato" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                    <Label text="Usuário Criador:" GridPane.rowIndex="2" />
+                    <ComboBox fx:id="cmbUsuarioCriadorContrato" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    <Label text="Data do Contrato:" GridPane.rowIndex="3" />
+                    <TextField fx:id="txtDataContrato" promptText="DD/MM/AAAA" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                    <Label text="Valor Caução:" GridPane.rowIndex="4" />
+                    <TextField fx:id="txtValorCaucaoContrato" promptText="Ex: 500.00" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                    <Label text="Valor Total:" GridPane.rowIndex="5" />
+                    <TextField fx:id="txtValorTotalContrato" editable="false" promptText="Calculado" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                    <Label text="Status:" GridPane.rowIndex="6" />
+                    <ComboBox fx:id="cmbStatusContrato" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                </GridPane>
+                <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                    <Button mnemonicParsing="false" onAction="#handleAtualizarListaContrato" text="Atualizar Lista" />
+                    <Button mnemonicParsing="false" onAction="#handleSalvarContrato" text="Salvar/Atualizar" />
+                    <Button mnemonicParsing="false" onAction="#handleLimparFormularioContrato" text="Novo Cadastro" />
+                    <Button mnemonicParsing="false" onAction="#handleDeletarContrato" text="Deletar Selecionado" />
+                </HBox>
+                <TableView fx:id="tabelaContratos" VBox.vgrow="ALWAYS" prefHeight="300.0">
+                    <columns>
+                        <TableColumn fx:id="colIdContrato" prefWidth="50.0" text="ID" />
+                        <TableColumn fx:id="colClienteContrato" prefWidth="150.0" text="Cliente" />
+                        <TableColumn fx:id="colUsuarioCriadorContrato" prefWidth="100.0" text="Usuário" />
+                        <TableColumn fx:id="colDataContrato" prefWidth="100.0" text="Data" />
+                        <TableColumn fx:id="colStatusContrato" prefWidth="100.0" text="Status" />
+                        <TableColumn fx:id="colValorTotalContrato" prefWidth="100.0" text="Valor Total" />
+                    </columns>
+                    <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
+                </TableView>
+            </VBox>
+
+            <VBox fx:id="containerLocacoes" visible="false" managed="false" spacing="15.0">
+                <Label text="Cadastro e Listagem de Locações" style="-fx-font-size: 16pt;" />
+                <GridPane hgap="10.0" vgap="10.0">
+                    <Label text="ID:" GridPane.rowIndex="0" />
+                    <TextField fx:id="txtIdLocacao" editable="false" promptText="Gerado Automaticamente" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                    <Label text="Contrato:" GridPane.rowIndex="1" />
+                    <ComboBox fx:id="cmbContratoLocacao" prefWidth="250.0" promptText="Selecione o Contrato" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                    <Label text="Veículo:" GridPane.rowIndex="2" />
+                    <ComboBox fx:id="cmbVeiculoLocacao" prefWidth="250.0" promptText="Selecione o Veículo" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    <Label text="Data Retirada:" GridPane.rowIndex="3" />
+                    <TextField fx:id="txtDataRetiradaLocacao" promptText="DD/MM/AAAA" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                    <Label text="Data Devolução:" GridPane.rowIndex="4" />
+                    <TextField fx:id="txtDataDevolucaoLocacao" promptText="DD/MM/AAAA" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                    <Label text="Valor Locação (Base):" GridPane.rowIndex="5" />
+                    <TextField fx:id="txtValorLocacaoBase" promptText="Ex: 150.00" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                    <Label text="Data Contrato:" GridPane.rowIndex="6" />
+                    <DatePicker fx:id="dpDataContrato" promptText="Ex: 150.00" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                    <Label text="Valor Caucao:" GridPane.rowIndex="7" />
+                    <TextField fx:id="txtValorCaucao" promptText="Ex: 150.00" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                </GridPane>
+                <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                    <Button mnemonicParsing="false" onAction="#handleAtualizarListaLocacao" text="Atualizar Lista" />
+                    <Button mnemonicParsing="false" onAction="#handleSalvarLocacao" text="Salvar/Atualizar" />
+                    <Button mnemonicParsing="false" onAction="#handleLimparFormularioLocacao" text="Novo Cadastro" />
+                    <Button mnemonicParsing="false" onAction="#handleDeletarLocacao" text="Deletar Selecionado" />
+                </HBox>
+                <TableView fx:id="tabelaLocacoes" VBox.vgrow="ALWAYS" prefHeight="300.0">
+                    <columns>
+                        <TableColumn fx:id="colIdLocacao" prefWidth="50.0" text="ID" />
+                        <TableColumn fx:id="colContratoLocacao" prefWidth="150.0" text="Contrato (ID)" />
+                        <TableColumn fx:id="colVeiculoLocacao" prefWidth="150.0" text="Veículo (Placa)" />
+                        <TableColumn fx:id="colDataRetiradaLocacao" prefWidth="100.0" text="Retirada" />
+                        <TableColumn fx:id="colDataDevolucaoLocacao" prefWidth="100.0" text="Devolução" />
+                    </columns>
+                    <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
+                </TableView>
+            </VBox>
+
+            <VBox fx:id="containerPagamentos" visible="false" managed="false" spacing="15.0">
+                <Label text="Cadastro e Listagem de Pagamentos" style="-fx-font-size: 16pt;" />
+                <GridPane hgap="10.0" vgap="10.0">
+                    <Label text="ID:" GridPane.rowIndex="0" />
+                    <TextField fx:id="txtIdPagamento" editable="false" promptText="Gerado Automaticamente" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                    <Label text="Contrato:" GridPane.rowIndex="1" />
+                    <ComboBox fx:id="cmbContratoPagamento" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                    <Label text="Tipo de Pagamento:" GridPane.rowIndex="2" />
+                    <ComboBox fx:id="cmbTipoPagamento" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    <Label text="Valor Total:" GridPane.rowIndex="3" />
+                    <TextField fx:id="txtValorTotalPagamento" promptText="Ex: 1500.00" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                </GridPane>
+                <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                    <Button mnemonicParsing="false" onAction="#handleAtualizarListaPagamento" text="Atualizar Lista" />
+                    <Button mnemonicParsing="false" onAction="#handleSalvarPagamento" text="Salvar/Atualizar" />
+                    <Button mnemonicParsing="false" onAction="#handleLimparFormularioPagamento" text="Novo Cadastro" />
+                    <Button mnemonicParsing="false" onAction="#handleDeletarPagamento" text="Deletar Selecionado" />
+                </HBox>
+                <TableView fx:id="tabelaPagamentos" VBox.vgrow="ALWAYS" prefHeight="300.0">
+                    <columns>
+                        <TableColumn fx:id="colIdPagamento" prefWidth="50.0" text="ID" />
+                        <TableColumn fx:id="colContratoPagamento" prefWidth="150.0" text="Contrato (ID)" />
+                        <TableColumn fx:id="colTipoPagamento" prefWidth="150.0" text="Tipo" />
+                        <TableColumn fx:id="colValorPagamento" prefWidth="100.0" text="Valor" />
+                    </columns>
+                    <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
+                </TableView>
+            </VBox>
+
+            <VBox fx:id="containerManutencao" visible="false" managed="false" spacing="15.0">
+                <Label text="Cadastro e Listagem de Manutenções" style="-fx-font-size: 16pt;" />
+                <GridPane hgap="10.0" vgap="10.0">
+                    <Label text="ID:" GridPane.rowIndex="0" />
+                    <TextField fx:id="txtIdManutencao" editable="false" promptText="Gerado Automaticamente" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                    <Label text="Veículo:" GridPane.rowIndex="1" />
+                    <ComboBox fx:id="cmbVeiculoManutencao" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                    <Label text="Data:" GridPane.rowIndex="2" />
+                    <TextField fx:id="txtDataManutencao" promptText="DD/MM/AAAA" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    <Label text="Custo:" GridPane.rowIndex="3" />
+                    <TextField fx:id="txtCustoManutencao" promptText="Ex: 500.00" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                    <Label text="Descrição:" GridPane.rowIndex="4" />
+                    <TextField fx:id="txtDescricaoManutencao" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                </GridPane>
+                <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                    <Button mnemonicParsing="false" onAction="#handleAtualizarListaManutencao" text="Atualizar Lista" />
+                    <Button mnemonicParsing="false" onAction="#handleSalvarManutencao" text="Salvar/Atualizar" />
+                    <Button mnemonicParsing="false" onAction="#handleLimparFormularioManutencao" text="Novo Cadastro" />
+                    <Button mnemonicParsing="false" onAction="#handleDeletarManutencao" text="Deletar Selecionado" />
+                </HBox>
+                <TableView fx:id="tabelaManutencoes" VBox.vgrow="ALWAYS" prefHeight="300.0">
+                    <columns>
+                        <TableColumn fx:id="colIdManutencao" prefWidth="50.0" text="ID" />
+                        <TableColumn fx:id="colVeiculoManutencao" prefWidth="150.0" text="Veículo (Placa)" />
+                        <TableColumn fx:id="colDataManutencao" prefWidth="100.0" text="Data" />
+                        <TableColumn fx:id="colCustoManutencao" prefWidth="100.0" text="Custo" />
+                        <TableColumn fx:id="colDescricaoManutencao" prefWidth="150.0" text="Descrição" />
+                    </columns>
+                    <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
+                </TableView>
+            </VBox>
+
+            <VBox fx:id="containerOcorrencias" visible="false" managed="false" spacing="15.0">
+                <Label text="Cadastro e Listagem de Ocorrências" style="-fx-font-size: 16pt;" />
+                <GridPane hgap="10.0" vgap="10.0">
+                    <Label text="ID:" GridPane.rowIndex="0" />
+                    <TextField fx:id="txtIdOcorrencia" editable="false" promptText="Gerado Automaticamente" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                    <Label text="Locação:" GridPane.rowIndex="1" />
+                    <ComboBox fx:id="cmbLocacaoOcorrencia" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                    <Label text="Valor:" GridPane.rowIndex="2" />
+                    <TextField fx:id="txtValorOcorrencia" promptText="Ex: 500.00" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    <Label text="Descrição:" GridPane.rowIndex="3" />
+                    <TextField fx:id="txtDescricaoOcorrencia" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                </GridPane>
+                <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                    <Button mnemonicParsing="false" onAction="#handleAtualizarListaOcorrencia" text="Atualizar Lista" />
+                    <Button mnemonicParsing="false" onAction="#handleSalvarOcorrencia" text="Salvar/Atualizar" />
+                    <Button mnemonicParsing="false" onAction="#handleLimparFormularioOcorrencia" text="Novo Cadastro" />
+                    <Button mnemonicParsing="false" onAction="#handleDeletarOcorrencia" text="Deletar Selecionado" />
+                </HBox>
+                <TableView fx:id="tabelaOcorrencias" VBox.vgrow="ALWAYS" prefHeight="300.0">
+                    <columns>
+                        <TableColumn fx:id="colIdOcorrencia" prefWidth="50.0" text="ID" />
+                        <TableColumn fx:id="colLocacaoOcorrencia" prefWidth="150.0" text="Locação (ID)" />
+                        <TableColumn fx:id="colValorOcorrencia" prefWidth="100.0" text="Valor" />
+                        <TableColumn fx:id="colDescricaoOcorrencia" prefWidth="150.0" text="Descrição" />
+                    </columns>
+                    <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
+                </TableView>
+            </VBox>
+            -->
         </StackPane>
     </center>
 </BorderPane>

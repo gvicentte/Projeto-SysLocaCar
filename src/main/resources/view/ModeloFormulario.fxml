@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+
+<BorderPane prefHeight="750.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.projetosyslocacar.controller.MainViewController">
+
+    <left>
+        <VBox fx:id="vBoxMenuLateral" prefWidth="150.0" spacing="15.0" style="-fx-background-color: #f4f4f4; -fx-padding: 15;">
+            <children>
+                <Label text="GERENCIAMENTO" style="-fx-font-weight: bold; -fx-font-size: 14px;" />
+                <Button fx:id="btnModelos" text="Modelos" prefWidth="130.0" onAction="#handleNavegacao" />
+                <Button fx:id="btnMarcas" text="Marcas" prefWidth="130.0" onAction="#handleNavegacao" />
+                <Button fx:id="btnCategorias" text="Categorias" prefWidth="130.0" onAction="#handleNavegacao" />
+                <Button fx:id="btnVeiculos" text="Veículos" prefWidth="130.0" onAction="#handleNavegacao" />
+            </children>
+        </VBox>
+    </left>
+
+    <center>
+        <StackPane fx:id="stackPaneConteudo" style="-fx-padding: 20;">
+
+            <VBox fx:id="containerModelos" spacing="15.0">
+                <Label text="Cadastro e Listagem de Modelos" style="-fx-font-size: 16pt;" />
+
+                <GridPane hgap="10.0" vgap="10.0">
+                    <children>
+                        <Label text="ID:" GridPane.rowIndex="0" />
+                        <TextField fx:id="txtIdModelo" editable="false" promptText="Gerado Automaticamente" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                        <Label text="Nome do Modelo:" GridPane.rowIndex="1" />
+                        <TextField fx:id="txtNomeModelo" promptText="Ex: Onix 1.0, Civic LX" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                        <Label text="Ano (ou Data):" GridPane.rowIndex="2" />
+                        <TextField fx:id="txtAnoModelo" promptText="Ex: 2024" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                        <Label text="Marca:" GridPane.rowIndex="3" />
+                        <ComboBox fx:id="cmbMarcaModelo" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                        <Label text="Categoria:" GridPane.rowIndex="4" />
+                        <ComboBox fx:id="cmbCategoriaModelo" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+                        <Label text="ID do Modelo (Código):" GridPane.rowIndex="5" />
+                        <TextField fx:id="txtCodModelo" promptText="Código interno" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                    </children>
+                </GridPane>
+
+                <HBox alignment="CENTER_RIGHT" spacing="10.0">
+                    <children>
+                        <Button mnemonicParsing="false" onAction="#handleAtualizarListaModelo" text="Atualizar Lista" />
+                        <Button mnemonicParsing="false" onAction="#handleSalvarModelo" text="Salvar/Atualizar" />
+                        <Button mnemonicParsing="false" onAction="#handleLimparFormularioModelo" text="Novo Cadastro" />
+                    </children>
+                </HBox>
+
+                <Label text="Modelos Cadastrados (Galeria)" style="-fx-font-size: 12pt; -fx-font-weight: bold;" />
+
+                <TableView fx:id="tabelaModelos" VBox.vgrow="ALWAYS" prefHeight="300.0">
+                    <columns>
+                        <TableColumn fx:id="colIdModelo" prefWidth="50.0" text="ID" />
+                        <TableColumn fx:id="colNomeModelo" prefWidth="150.0" text="Nome" />
+                        <TableColumn fx:id="colAnoModelo" prefWidth="100.0" text="Ano" />
+                        <TableColumn fx:id="colMarcaModelo" prefWidth="120.0" text="Marca" />
+                        <TableColumn fx:id="colCategoriaModelo" prefWidth="120.0" text="Categoria" />
+                        <TableColumn fx:id="colCodModeloTabela" prefWidth="80.0" text="Cód." />
+
+                        <TableColumn fx:id="colAcoesModelo" prefWidth="150.0" text="Ações" />
+                    </columns>
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                    </columnResizePolicy>
+                </TableView>
+
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                    <children>
+                        <Button mnemonicParsing="false" onAction="#handleEditarModelo" text="Editar Selecionado" />
+                        <Button mnemonicParsing="false" onAction="#handleDeletarModelo" text="Deletar Selecionado" />
+                    </children>
+                </HBox>
+            </VBox>
+
+            <VBox fx:id="containerMarcas" visible="false" managed="false" spacing="15.0">
+                <Label text="Cadastro e Listagem de Marcas" style="-fx-font-size: 16pt;" />
+                <GridPane hgap="10.0" vgap="10.0">
+                    <Label text="ID:" GridPane.rowIndex="0" />
+                    <TextField fx:id="txtIdMarca" editable="false" promptText="Gerado Automaticamente" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                    <Label text="Nome da Marca:" GridPane.rowIndex="1" />
+                    <TextField fx:id="txtNomeMarca" promptText="Ex: Chevrolet, Fiat" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                </GridPane>
+                <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                    <Button mnemonicParsing="false" onAction="#handleAtualizarListaMarca" text="Atualizar Lista" />
+                    <Button mnemonicParsing="false" onAction="#handleSalvarMarca" text="Salvar/Atualizar" />
+                    <Button mnemonicParsing="false" onAction="#handleLimparFormularioMarca" text="Novo Cadastro" />
+                    <Button mnemonicParsing="false" onAction="#handleDeletarMarca" text="Deletar Selecionado" />
+                </HBox>
+                <TableView fx:id="tabelaMarcas" VBox.vgrow="ALWAYS" prefHeight="300.0">
+                    <columns>
+                        <TableColumn fx:id="colIdMarca" prefWidth="75.0" text="ID" />
+                        <TableColumn fx:id="colNomeMarca" prefWidth="250.0" text="Nome" />
+                    </columns>
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                    </columnResizePolicy>
+                </TableView>
+            </VBox>
+
+            <VBox fx:id="containerCategorias" visible="false" managed="false" spacing="15.0">
+                <Label text="Cadastro e Listagem de Categorias" style="-fx-font-size: 16pt;" />
+                <GridPane hgap="10.0" vgap="10.0">
+                    <Label text="ID:" GridPane.rowIndex="0" />
+                    <TextField fx:id="txtIdCategoria" editable="false" promptText="Gerado Automaticamente" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                    <Label text="Nome da Categoria:" GridPane.rowIndex="1" />
+                    <TextField fx:id="txtNomeCategoria" promptText="Ex: Econômico, Luxo" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                    <Label text="Valor Locação (R$):" GridPane.rowIndex="2" />
+                    <TextField fx:id="txtValorLocacaoCategoria" promptText="Ex: 89.90" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                </GridPane>
+                <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                    <Button mnemonicParsing="false" onAction="#handleAtualizarListaCategoria" text="Atualizar Lista" />
+                    <Button mnemonicParsing="false" onAction="#handleSalvarCategoria" text="Salvar/Atualizar" />
+                    <Button mnemonicParsing="false" onAction="#handleLimparFormularioCategoria" text="Novo Cadastro" />
+                    <Button mnemonicParsing="false" onAction="#handleDeletarCategoria" text="Deletar Selecionado" />
+                </HBox>
+                <TableView fx:id="tabelaCategorias" VBox.vgrow="ALWAYS" prefHeight="300.0">
+                    <columns>
+                        <TableColumn fx:id="colIdCategoria" prefWidth="75.0" text="ID" />
+                        <TableColumn fx:id="colNomeCategoria" prefWidth="200.0" text="Nome" />
+                        <TableColumn fx:id="colValorLocacaoCategoria" prefWidth="150.0" text="Valor Diário" />
+                    </columns>
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                    </columnResizePolicy>
+                </TableView>
+            </VBox>
+
+            <VBox fx:id="containerVeiculos" visible="false" managed="false" spacing="15.0">
+                <Label text="Cadastro e Listagem de Veículos" style="-fx-font-size: 16pt;" />
+                <GridPane hgap="10.0" vgap="10.0">
+                    <Label text="ID:" GridPane.rowIndex="0" />
+                    <TextField fx:id="txtIdVeiculo" editable="false" promptText="Gerado Automaticamente" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                    <Label text="Placa:" GridPane.rowIndex="1" />
+                    <TextField fx:id="txtPlacaVeiculo" promptText="Ex: ABC-1234" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                    <Label text="Chassi:" GridPane.rowIndex="2" />
+                    <TextField fx:id="txtChassiVeiculo" promptText="Ex: 9BW..." GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                    <Label text="KM (String):" GridPane.rowIndex="3" />
+                    <TextField fx:id="txtKmVeiculo" promptText="Ex: 50.000" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                    <Label text="Cor:" GridPane.rowIndex="4" />
+                    <TextField fx:id="txtCorVeiculo" promptText="Ex: Preto" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+                    <Label text="Marca do Veículo:" GridPane.rowIndex="5" />
+                    <ComboBox fx:id="cmbMarcaVeiculo" prefWidth="250.0"
+                              onAction="#handleMarcaSelecionadaVeiculo"
+                              GridPane.columnIndex="1" GridPane.rowIndex="5" />
+
+                    <Label text="Modelo:" GridPane.rowIndex="6" />
+                    <ComboBox fx:id="cmbModeloVeiculo" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+
+                    <Label text="Status:" GridPane.rowIndex="7" />
+                    <ComboBox fx:id="cmbStatusVeiculo" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                </GridPane>
+                <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                    <Button mnemonicParsing="false" onAction="#handleAtualizarListaVeiculo" text="Atualizar Lista" />
+                    <Button mnemonicParsing="false" onAction="#handleSalvarVeiculo" text="Salvar/Atualizar" />
+                    <Button mnemonicParsing="false" onAction="#handleLimparFormularioVeiculo" text="Novo Cadastro" />
+                    <Button mnemonicParsing="false" onAction="#handleDeletarVeiculo" text="Deletar Selecionado" />
+                </HBox>
+                <TableView fx:id="tabelaVeiculos" VBox.vgrow="ALWAYS" prefHeight="300.0">
+                    <columns>
+                        <TableColumn fx:id="colIdVeiculo" prefWidth="50.0" text="ID" />
+                        <TableColumn fx:id="colPlacaVeiculo" prefWidth="100.0" text="Placa" />
+                        <TableColumn fx:id="colModeloVeiculo" prefWidth="150.0" text="Modelo" />
+                        <TableColumn fx:id="colStatusVeiculo" prefWidth="100.0" text="Status" />
+                        <TableColumn fx:id="colKmVeiculo" prefWidth="80.0" text="KM" />
+                        <TableColumn fx:id="colChassiVeiculo" prefWidth="150.0" text="Chassi" />
+                    </columns>
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                    </columnResizePolicy>
+                </TableView>
+            </VBox>
+
+        </StackPane>
+    </center>
+</BorderPane>

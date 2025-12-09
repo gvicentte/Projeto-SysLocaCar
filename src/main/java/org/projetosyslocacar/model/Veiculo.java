@@ -13,7 +13,10 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString; // ⬅️ Adicione este import
+import lombok.EqualsAndHashCode; // ⬅️ Adicione este import
 
 import java.util.List;
 
@@ -52,15 +55,20 @@ public class Veiculo {
     // O Veículo é o lado "dono" (ManyToOne) e contém a chave estrangeira (JoinColumn)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "modelo_id", nullable = false) // 'modelo_id' será a FK
+    @EqualsAndHashCode.Exclude
     private Modelo modelo;
 
     // Relacionamento Um-para-Muitos: Um Veículo pode ter Muitas Manutenções
     // mappedBy aponta para o campo 'veiculo' na classe Manutencao (se ela existir)
     @OneToMany(mappedBy = "veiculo")
+    @ToString.Exclude // ⬅️ CORREÇÃO para o toString()
+    @EqualsAndHashCode.Exclude // ⬅️ Boa prática, para o equals/hashCode
     private List<Manutencao> manutencoes;
 
     // Relacionamento Um-para-Muitos: Um Veículo pode ter Muitas Locações
     // mappedBy aponta para o campo 'veiculo' na classe Locacao (se ela existir)
     @OneToMany(mappedBy = "veiculo")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Locacao> locacoes;
 }

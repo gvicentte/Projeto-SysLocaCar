@@ -37,6 +37,7 @@
                 <Label text="REGISTROS" style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 15 0 0 0;" />
                 <Button fx:id="btnManutencao" text="Manutenção" prefWidth="130.0" onAction="#handleNavegacao" />
                 <Button fx:id="btnOcorrencias" text="Ocorrências" prefWidth="130.0" onAction="#handleNavegacao" />
+                <Button fx:id="btnEndereco" text="Endereco" prefWidth="130.0" onAction="#handleNavegacao" />
             </children>
         </VBox>
     </left>
@@ -203,13 +204,8 @@
                     <TextField fx:id="txtRgCliente" promptText="Registro Geral" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                     <Label text="Email:" GridPane.rowIndex="5" />
                     <TextField fx:id="txtEmailCliente" promptText="email@dominio.com" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-
-                    <Label text="CEP:" GridPane.rowIndex="6" />
-                    <TextField fx:id="txtCepCliente" promptText="00000-000" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                    <Label text="Logradouro:" GridPane.rowIndex="7" />
-                    <TextField fx:id="txtLogradouroCliente" promptText="Rua/Avenida" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                    <Label text="Número:" GridPane.rowIndex="8" />
-                    <TextField fx:id="txtNumeroCliente" promptText="123" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                    <Label text="Endereco" GridPane.rowIndex="6" />
+                    <ComboBox fx:id="cmbEnderecoCliente" prefWidth="250.0"  GridPane.columnIndex="1" GridPane.rowIndex="6"/>
                 </GridPane>
                 <HBox spacing="10.0" alignment="CENTER_RIGHT">
                     <Button mnemonicParsing="false" onAction="#handleAtualizarListaCliente" text="Atualizar Lista" />
@@ -230,7 +226,6 @@
                     <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
                 </TableView>
             </VBox>
-            <!--
             <VBox fx:id="containerFuncionarios" visible="false" managed="false" spacing="15.0">
                 <Label text="Cadastro e Listagem de Funcionários" style="-fx-font-size: 16pt;" />
                 <GridPane hgap="10.0" vgap="10.0">
@@ -242,8 +237,8 @@
                     <TextField fx:id="txtMatriculaFuncionario" promptText="Matrícula Interna" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                     <Label text="CPF:" GridPane.rowIndex="3" />
                     <TextField fx:id="txtCpfFuncionario" promptText="000.000.000-00" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                    <Label text="Logradouro:" GridPane.rowIndex="4" />
-                    <TextField fx:id="txtLogradouroFuncionario" promptText="Rua/Avenida (Endereço)" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                    <Label text="Endereco" GridPane.rowIndex="4" />
+                    <ComboBox fx:id="cmbEnderecoFuncionario" prefWidth="250.0"  GridPane.columnIndex="1" GridPane.rowIndex="4"/>
                 </GridPane>
                 <HBox spacing="10.0" alignment="CENTER_RIGHT">
                     <Button mnemonicParsing="false" onAction="#handleAtualizarListaFuncionario" text="Atualizar Lista" />
@@ -261,7 +256,6 @@
                     <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
                 </TableView>
             </VBox>
-
             <VBox fx:id="containerUsuarios" visible="false" managed="false" spacing="15.0">
                 <Label text="Cadastro e Listagem de Usuários" style="-fx-font-size: 16pt;" />
                 <GridPane hgap="10.0" vgap="10.0">
@@ -303,11 +297,11 @@
                     <Label text="Usuário Criador:" GridPane.rowIndex="2" />
                     <ComboBox fx:id="cmbUsuarioCriadorContrato" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                     <Label text="Data do Contrato:" GridPane.rowIndex="3" />
-                    <TextField fx:id="txtDataContrato" promptText="DD/MM/AAAA" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                    <DatePicker fx:id="dtpDataContrato" promptText="DD/MM/AAAA" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                     <Label text="Valor Caução:" GridPane.rowIndex="4" />
                     <TextField fx:id="txtValorCaucaoContrato" promptText="Ex: 500.00" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                     <Label text="Valor Total:" GridPane.rowIndex="5" />
-                    <TextField fx:id="txtValorTotalContrato" editable="false" promptText="Calculado" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                    <TextField fx:id="txtValorTotalContrato" promptText="Calculado" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                     <Label text="Status:" GridPane.rowIndex="6" />
                     <ComboBox fx:id="cmbStatusContrato" prefWidth="250.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                 </GridPane>
@@ -457,7 +451,50 @@
                     <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
                 </TableView>
             </VBox>
-            -->
+
+            <VBox fx:id="containerEndereco" visible="false" managed="false" spacing="15.0">
+                <Label text="Cadastro e Listagem de Endereços" style="-fx-font-size: 16pt;" />
+
+                <GridPane hgap="10.0" vgap="10.0">
+                    <Label text="ID:" GridPane.rowIndex="0" />
+                    <TextField fx:id="txtIdEndereco" editable="false" promptText="Gerado Automaticamente" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                    <Label text="CEP:" GridPane.rowIndex="1" />
+                    <TextField fx:id="txtCepEndereco" promptText="00000-000" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                    <Label text="Logradouro:" GridPane.rowIndex="2" />
+                    <TextField fx:id="txtLogradouroEndereco" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                    <Label text="Número:" GridPane.rowIndex="3" />
+                    <TextField fx:id="txtNumeroEndereco" promptText="123" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                    <Label text="Complemento:" GridPane.rowIndex="4" />
+                    <TextField fx:id="txtComplementoEndereco" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+                    <Label text="Referência:" GridPane.rowIndex="5" />
+                    <TextField fx:id="txtReferenciaEndereco" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                </GridPane>
+
+                <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                    <Button mnemonicParsing="false" onAction="#handleAtualizarListaEndereco" text="Atualizar Lista" />
+                    <Button mnemonicParsing="false" onAction="#handleSalvarEndereco" text="Salvar/Atualizar" />
+                    <Button mnemonicParsing="false" onAction="#handleLimparFormularioEndereco" text="Novo Cadastro" />
+                    <Button mnemonicParsing="false" onAction="#handleDeletarEndereco" text="Deletar Selecionado" />
+                </HBox>
+
+                <TableView fx:id="tabelaEnderecos" VBox.vgrow="ALWAYS" prefHeight="300.0">
+                    <columns>
+                        <TableColumn fx:id="colIdEndereco" prefWidth="50.0" text="ID" />
+                        <TableColumn fx:id="colCepEndereco" prefWidth="100.0" text="CEP" />
+                        <TableColumn fx:id="colLogradouroEndereco" prefWidth="180.0" text="Logradouro" />
+                        <TableColumn fx:id="colNumeroEndereco" prefWidth="70.0" text="Número" />
+                        <TableColumn fx:id="colComplementoEndereco" prefWidth="120.0" text="Complemento" />
+                        <TableColumn fx:id="colReferenciaEndereco" prefWidth="120.0" text="Referência" />
+                    </columns>
+                    <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /></columnResizePolicy>
+                </TableView>
+            </VBox>
+
         </StackPane>
     </center>
 </BorderPane>

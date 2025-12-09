@@ -40,8 +40,9 @@ public class Locacao {
 
     // Relacionamento Muitos-para-Um: Locação pertence a Um ContratoLocacao
     // Locação é o lado dono e contém a FK
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "contrato_id", nullable = false)
+    //@EqualsAndHashCode.Exclude
     private ContratoLocacao contratoLocacao;
 
     // Relacionamento Muitos-para-Um: Locação está associada a Um Veículo

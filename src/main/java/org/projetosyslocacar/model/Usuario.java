@@ -46,6 +46,11 @@ public class Usuario {
     private Contato contatoPrincipal;
 
     // Se você usa Funcionario separadamente, esta lista rastreia os contratos criados por este usuário/funcionário.
-    @OneToMany(mappedBy = "usuarioCriador", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "usuarioCriador", fetch = FetchType.EAGER)
     private List<ContratoLocacao> contratosGerenciados;
+
+    @Override
+    public String toString() {
+        return nome;
+    }
 }

@@ -16,6 +16,7 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
@@ -35,6 +36,7 @@ public class ContratoLocacao {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private long id;
 
     @Temporal(TemporalType.DATE)
@@ -49,16 +51,27 @@ public class ContratoLocacao {
     private float valorTotal;
 
     // Relacionamento Muitos-para-Um: Contrato pertence a Um Cliente
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cliente_id", nullable = false)
+    @EqualsAndHashCode.Exclude
     private Cliente cliente;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "usuario_criador_id")
+    @EqualsAndHashCode.Exclude
     private Usuario usuarioCriador;
 
     // Relacionamento Um-para-Muitos: Um Contrato possui Muitas Locações
     // mappedBy aponta para o campo 'contratoLocacao' na classe Locacao
     @OneToMany(mappedBy = "contratoLocacao", cascade = CascadeType.ALL, orphanRemoval = true)
+    @EqualsAndHashCode.Exclude
     private List<Locacao> listaLocacao;
+
+    @Override
+    public String toString() {
+        String clienteNome = (cliente != null) ? cliente.getNome() : "N/A";
+        // Apenas use um campo simples do cliente, não o objeto completo.
+        return clienteNome;
+    }
+
 }

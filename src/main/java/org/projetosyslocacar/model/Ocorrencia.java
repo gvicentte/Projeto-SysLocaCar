@@ -10,6 +10,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -17,6 +18,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 public class Ocorrencia {
 
     @Id
@@ -32,5 +34,6 @@ public class Ocorrencia {
     // Ocorrencia é o lado dono e contém a FK
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "locacao_id", nullable = false) // 'locacao_id' será a chave estrangeira (FK)
+    @EqualsAndHashCode.Exclude
     private Locacao locacao;
 }

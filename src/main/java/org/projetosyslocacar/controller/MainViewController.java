@@ -1,9 +1,12 @@
 package org.projetosyslocacar.controller;
 
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors; // Import necessário para a filtragem em cascata
 
@@ -24,6 +27,7 @@ import java.time.LocalDate;
 // Importe todos os seus modelos e DAOs
 import org.projetosyslocacar.model.*;
 import org.projetosyslocacar.dao.*;
+import org.w3c.dom.Text;
 
 // O controlador principal unificado
 public class MainViewController implements Initializable {
@@ -60,6 +64,7 @@ public class MainViewController implements Initializable {
     @FXML private Button btnPagamentos;
     @FXML private Button btnManutencao;
     @FXML private Button btnOcorrencias;
+    @FXML private Button btnEndereco;
 
     @FXML private VBox containerModelos;
     @FXML private VBox containerMarcas;
@@ -73,6 +78,7 @@ public class MainViewController implements Initializable {
     @FXML private VBox containerPagamentos;
     @FXML private VBox containerManutencao;
     @FXML private VBox containerOcorrencias;
+    @FXML private VBox containerEndereco;
     private VBox containerAtual;
 
 
@@ -155,6 +161,7 @@ public class MainViewController implements Initializable {
     @FXML private TextField txtEmailCliente;
     @FXML private TextField txtCnhCliente;
     @FXML private TextField txtRgCliente;
+    @FXML private ComboBox<Endereco> cmbEnderecoCliente;
     @FXML private TableView<Cliente> tabelaClientes;
     @FXML private TableColumn<Cliente, Long> colIdCliente;
     @FXML private TableColumn<Cliente, String> colNomeCliente;
@@ -163,36 +170,149 @@ public class MainViewController implements Initializable {
     @FXML private TableColumn<Cliente, String> colCnhCliente;
     @FXML private TableColumn<Cliente, String> colRgCliente;
     private Cliente clienteSelecionado;
-/*
-    // =================================================================
-// CONTRATO LOCAÇÃO (FXML)
-// =================================================================
+
+
+    // Funcionarios
+
+    @FXML private TextField txtIdFuncionario;
+    @FXML private TextField txtNomeFuncionario;
+    @FXML private TextField txtMatriculaFuncionario;
+    @FXML private TextField txtCpfFuncionario;
+    @FXML private ComboBox<Endereco> cmbEnderecoFuncionario;
+    @FXML private TableView<Funcionario> tabelaFuncionarios;
+    @FXML private TableColumn<Funcionario, String> colIdFuncionario;
+    @FXML private TableColumn<Funcionario, String> colNomeFuncionario;
+    @FXML private TableColumn<Funcionario, String> colMatriculaFuncionario;
+    @FXML private TableColumn<Funcionario, String> colLogradouroFuncionario;
+    private Funcionario funcionarioSelecionado;
+
+
+    // USUARIOS
+
+    @FXML private TextField txtIdUsuario;
+    @FXML private TextField txtNomeUsuario;
+    @FXML private TextField txtCpfUsuario;
+    @FXML private TextField txtLoginUsuario;
+    @FXML private TextField txtSenhaUsuario;
+    @FXML private TableView<Usuario> tabelaUsuarios;
+    @FXML private TableColumn<Usuario, String> colIdUsuario;
+    @FXML private TableColumn<Usuario, String> colNomeUsuario;
+    @FXML private TableColumn<Usuario, String> colLoginUsuario;
+    @FXML private TableColumn<Usuario, String> colCpfUsuario;
+    private Usuario usuarioSelecionado;
+
+    // CONTRATOS
 
     @FXML private TextField txtIdContrato;
-    @FXML private DatePicker dpDataContrato;
-    @FXML private TextField txtValorCaucao;
-    @FXML private ComboBox<ContratoLocacao.StatusLocacao> cmbStatusContrato;
+    @FXML private ComboBox<Cliente> cmbClienteContrato;
+    @FXML private ComboBox<Usuario> cmbUsuarioCriadorContrato;
+    @FXML private DatePicker dtpDataContrato;
+    @FXML private TextField txtValorCaucaoContrato;
     @FXML private TextField txtValorTotalContrato;
-    @FXML private ComboBox<Cliente> cmbClienteContrato; // Para selecionar o cliente responsável
-
+    @FXML private ComboBox<ContratoLocacao.StatusLocacao> cmbStatusContrato;
     @FXML private TableView<ContratoLocacao> tabelaContratos;
-    @FXML private TableColumn<ContratoLocacao, Long> colIdContrato;
-    @FXML private TableColumn<ContratoLocacao, Date> colDataContrato;
-    @FXML private TableColumn<ContratoLocacao, ContratoLocacao.StatusLocacao> colStatusContrato;
-    @FXML private TableColumn<ContratoLocacao, Float> colValorTotalContrato;
-    @FXML private TableColumn<ContratoLocacao, String> colClienteContrato; // Exibir o nome do Cliente
+    @FXML private TableColumn<ContratoLocacao,String> colIdContrato;
+    @FXML private TableColumn<ContratoLocacao,String> colClienteContrato;
+    @FXML private TableColumn<ContratoLocacao,String> colUsuarioCriadorContrato;
+    @FXML private TableColumn<ContratoLocacao,String> colDataContrato;
+    @FXML private TableColumn<ContratoLocacao,String> colStatusContrato;
+    @FXML private TableColumn<ContratoLocacao,String> colValorTotalContrato;
+    private ContratoLocacao contratoLocacaoSelecionado;
 
-    private ContratoLocacao contratoSelecionado;
 
-    // =================================================================
-// ENDEREÇO (FXML) - Associado ao Cliente
-// =================================================================
-    @FXML private TextField txtCepCliente;
-    @FXML private TextField txtLogradouroCliente;
-    @FXML private TextField txtNumeroCliente;
-    @FXML private TextField txtComplementoCliente;
-    @FXML private TextField txtReferenciaCliente;
-*/
+    // LOCACAO
+
+    @FXML private TextField txtIdLocacao;
+    @FXML private ComboBox<ContratoLocacao> cmbContratoLocacao;
+    @FXML private ComboBox<Veiculo> cmbVeiculoLocacao;
+    @FXML private TextField txtDataRetiradaLocacao; // Deveria ser DatePicker
+    @FXML private TextField txtDataDevolucaoLocacao; // Deveria ser DatePicker
+    @FXML private TextField txtValorLocacaoBase;
+    @FXML private DatePicker dpDataContrato; // Este campo deve ser usado para exibição do Contrato
+    @FXML private TextField txtValorCaucao; // Este campo deve ser usado para exibição do Contrato
+    @FXML private TableView<Locacao> tabelaLocacoes;
+    @FXML private TableColumn<Locacao, Long> colIdLocacao;
+    @FXML private TableColumn<Locacao, Long> colContratoLocacao;
+    @FXML private TableColumn<Locacao, String> colVeiculoLocacao;
+    @FXML private TableColumn<Locacao, Date> colDataRetiradaLocacao;
+    @FXML private TableColumn<Locacao, Date> colDataDevolucaoLocacao;
+    private ObservableList<Locacao> listaLocacoes = FXCollections.observableArrayList();
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+
+    // PAGAMENTO
+    @FXML private TextField txtIdPagamento;
+    @FXML private ComboBox<ContratoLocacao> cmbContratoPagamento;
+    @FXML private ComboBox<Pagamento.TipoPagamento> cmbTipoPagamento;
+    @FXML private TextField txtValorTotalPagamento;
+    @FXML private TableView<Pagamento> tabelaPagamentos;
+    @FXML private TableColumn<Pagamento, Long> colIdPagamento;
+    @FXML private TableColumn<Pagamento, String> colContratoPagamento;
+    @FXML private TableColumn<Pagamento, Pagamento.TipoPagamento> colTipoPagamento;
+    @FXML private TableColumn<Pagamento, Float> colValorPagamento;
+    private ObservableList<Pagamento> listaPagamentos = FXCollections.observableArrayList();
+
+
+    // MANUTENCAO
+
+    @FXML private TextField txtIdManutencao;
+    @FXML private ComboBox<Veiculo> cmbVeiculoManutencao;
+    @FXML private TextField txtDataManutencao;
+    @FXML private TextField txtCustoManutencao;
+    @FXML private TextField txtDescricaoManutencao;
+    @FXML private TableView<Manutencao> tabelaManutencoes;
+    @FXML private TableColumn<Manutencao, Long> colIdManutencao;
+    @FXML private TableColumn<Manutencao, String> colVeiculoManutencao; // Usaremos a placa ou ID
+    @FXML private TableColumn<Manutencao, String> colDataManutencao;
+    @FXML private TableColumn<Manutencao, Float> colCustoManutencao;
+    @FXML private TableColumn<Manutencao, String> colDescricaoManutencao;
+
+    //private GenericDAO<Manutencao, Long> manutencaosDAO = new GenericDAO<>(Manutencao.class);
+    //private GenericDAO<Veiculo, Long> veiculosDAO = new GenericDAO<>(Veiculo.class);
+    private ObservableList<Manutencao> listaManutencoes = FXCollections.observableArrayList();
+    private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+
+    // OCORRENCIAS
+
+    @FXML private TextField txtIdOcorrencia;
+    @FXML private ComboBox<Locacao> cmbLocacaoOcorrencia;
+    @FXML private TextField txtDescricaoOcorrencia;
+    @FXML private TextField txtValorOcorrencia;
+    @FXML private TableView<Ocorrencia> tabelaOcorrencias;
+    @FXML private TableColumn<Ocorrencia, Long> colIdOcorrencia;
+    @FXML private TableColumn<Ocorrencia, String> colLocacaoOcorrencia;
+    @FXML private TableColumn<Ocorrencia, Float> colValorOcorrencia;
+    @FXML private TableColumn<Ocorrencia, String> colDescricaoOcorrencia;
+
+    // --- DAOs e Listas ---
+    private OcorrenciaDAO ocorrenciasDAO = new OcorrenciaDAO(Ocorrencia.class);
+    private LocacaoDAO locacaosDAO = new LocacaoDAO(Locacao.class); // Use o DAO específico
+    private ObservableList<Ocorrencia> listaOcorrencias = FXCollections.observableArrayList();
+
+
+    // ENDERECO
+
+    //@FXML private VBox containerEndereco;
+    @FXML private TextField txtIdEndereco;
+    @FXML private TextField txtCepEndereco;
+    @FXML private TextField txtLogradouroEndereco;
+    @FXML private TextField txtComplementoEndereco;
+    @FXML private TextField txtNumeroEndereco;
+    @FXML private TextField txtReferenciaEndereco;
+    @FXML private TableView<Endereco> tabelaEnderecos;
+    @FXML private TableColumn<Endereco, Long> colIdEndereco;
+    @FXML private TableColumn<Endereco, String> colCepEndereco;
+    @FXML private TableColumn<Endereco, String> colLogradouroEndereco;
+    @FXML private TableColumn<Endereco, String> colComplementoEndereco;
+    @FXML private TableColumn<Endereco, String> colNumeroEndereco;
+    @FXML private TableColumn<Endereco, String> colReferenciaEndereco;
+
+    // --- DAO e Lista Endereço ---
+    private EnderecoDAO enderecoDAO = new EnderecoDAO(Endereco.class);
+    private ObservableList<Endereco> listaEnderecos = FXCollections.observableArrayList();
+
+
     // =================================================================
     // INICIALIZAÇÃO E NAVEGAÇÃO
     // =================================================================
@@ -204,7 +324,14 @@ public class MainViewController implements Initializable {
         inicializarCategoriaCRUD();
         inicializarVeiculoCRUD();
         inicializarClienteCRUD();
-        //inicializarLocacaoCRUD();
+        inicializarFuncionarioCRUD();
+        inicializarUsuarioCRUD();
+        inicializarContratoCRUD();
+        initializeLocacoes();
+        initializePagamentos();
+        initializeManutencao();
+        initializeOcorrencias();
+        initializeEndereco();
 
         mostrarContainer(containerModelos, btnModelos);
         handleAtualizarListaModelo();
@@ -244,12 +371,14 @@ public class MainViewController implements Initializable {
             mostrarContainer(containerPagamentos,btnPagamentos);
         } else if (botaoClicado == btnUsuarios) {
             mostrarContainer(containerUsuarios,btnUsuarios);
+        } else if (botaoClicado == btnEndereco){
+            mostrarContainer(containerEndereco, btnEndereco);
         }
     }
 
     private void mostrarContainer(VBox container, Button botao) {
-        VBox[] containers = {containerModelos, containerMarcas, containerCategorias, containerVeiculos, containerClientes, containerContratos, containerFuncionarios, containerLocacoes, containerManutencao, containerOcorrencias, containerPagamentos, containerUsuarios};
-        Button[] botoes = {btnModelos, btnMarcas, btnCategorias, btnVeiculos, btnClientes, btnContratos, btnFuncionarios, btnLocacoes, btnManutencao, btnOcorrencias, btnPagamentos, btnUsuarios};
+        VBox[] containers = {containerModelos, containerMarcas, containerCategorias, containerVeiculos, containerClientes, containerContratos, containerFuncionarios, containerLocacoes, containerManutencao, containerOcorrencias, containerPagamentos, containerUsuarios, containerEndereco};
+        Button[] botoes = {btnModelos, btnMarcas, btnCategorias, btnVeiculos, btnClientes, btnContratos, btnFuncionarios, btnLocacoes, btnManutencao, btnOcorrencias, btnPagamentos, btnUsuarios, btnEndereco};
 
         for (VBox box : containers) {
             if (box != null) {
@@ -760,7 +889,7 @@ public class MainViewController implements Initializable {
             }
         }
     }
-    
+
     // CLIENTE
     private void inicializarClienteCRUD(){
         if (tabelaClientes != null) {
@@ -775,6 +904,7 @@ public class MainViewController implements Initializable {
             tabelaClientes.getSelectionModel().selectedItemProperty().addListener(
                     (observable, oldValue, newValue) -> mostrarDetalhesCliente(newValue));
 
+            carregarComboBoxEnderecoCliente();
             handleAtualizarListaCliente(); // Carrega os dados iniciais
         }
     }
@@ -785,6 +915,7 @@ public class MainViewController implements Initializable {
             txtIdCliente.setText(String.valueOf(cliente.getId()));
             txtNomeCliente.setText(cliente.getNome());
             txtCpfCliente.setText(cliente.getCpf());
+            cmbEnderecoCliente.setValue(cliente.getEndereco());
             txtEmailCliente.setText(cliente.getEmail());
             txtCnhCliente.setText(cliente.getCnh());
             txtRgCliente.setText(cliente.getRg());
@@ -805,7 +936,7 @@ public class MainViewController implements Initializable {
             cliente.setEmail(txtEmailCliente.getText());
             cliente.setCnh(txtCnhCliente.getText());
             cliente.setRg(txtRgCliente.getText());
-
+            cliente.setEndereco(cmbEnderecoCliente.getSelectionModel().getSelectedItem());
             // 2. Validação básica
             if (cliente.getNome() == null || cliente.getNome().trim().isEmpty() ||
                     cliente.getCpf() == null || cliente.getCpf().trim().isEmpty()) {
@@ -843,6 +974,7 @@ public class MainViewController implements Initializable {
         txtIdCliente.setText("Gerado Automaticamente");
         txtNomeCliente.setText("");
         txtCpfCliente.setText("");
+        cmbEnderecoCliente.getSelectionModel().clearSelection();
         txtEmailCliente.setText("");
         txtCnhCliente.setText("");
         txtRgCliente.setText("");
@@ -866,75 +998,266 @@ public class MainViewController implements Initializable {
         }
     }
 
-    /*
-    private void inicializarLocacaoCRUD(){
-        if (tabelaContratos != null) {
-            // 1. Configurar ComboBoxes
-            // Preenche o ComboBox com os valores do ENUM StatusLocacao
-            cmbStatusContrato.setItems(FXCollections.observableArrayList(ContratoLocacao.StatusLocacao.values()));
+    private void carregarComboBoxEnderecoCliente() {
+        List<Endereco> listaEnderecos = enderecoDAO.buscarTodos();
+        cmbEnderecoCliente.setItems(FXCollections.observableArrayList(listaEnderecos));
 
-            // Carrega a lista de clientes para a ComboBox
-            handleAtualizarComboClienteContrato();
+        cmbEnderecoCliente.setConverter(new StringConverter<Endereco>() {
+            @Override
+            public String toString(Endereco endereco) { return endereco == null ? "" : endereco.getCep(); }
+            @Override
+            public Endereco fromString(String string) { return null; }
+        });
+    }
 
-            // 2. Configurar Colunas da Tabela
-            colIdContrato.setCellValueFactory(new PropertyValueFactory<>("id"));
-            colDataContrato.setCellValueFactory(new PropertyValueFactory<>("dataContrato"));
-            colStatusContrato.setCellValueFactory(new PropertyValueFactory<>("status"));
-            colValorTotalContrato.setCellValueFactory(new PropertyValueFactory<>("valorTotal"));
+    // FUNCIONARIO METODOS
 
-            // Para mostrar o nome do Cliente (e não o objeto Cliente completo)
-            colClienteContrato.setCellValueFactory(cellData ->
-                    new SimpleStringProperty(cellData.getValue().getCliente().getNome()));
+    private void inicializarFuncionarioCRUD(){
+        if (tabelaFuncionarios != null) {
+            colIdFuncionario.setCellValueFactory(new PropertyValueFactory<>("id"));
+            colNomeFuncionario.setCellValueFactory(new PropertyValueFactory<>("nome"));
+            colMatriculaFuncionario.setCellValueFactory(new PropertyValueFactory<>("matricula"));
+            colLogradouroFuncionario.setCellValueFactory(new PropertyValueFactory<>("Endereco"));
 
-            // 3. Listener para preencher o formulário
-            tabelaContratos.getSelectionModel().selectedItemProperty().addListener(
-                    (observable, oldValue, newValue) -> mostrarDetalhesContrato(newValue));
+            // Listener para preencher o formulário ao selecionar um cliente
+            tabelaFuncionarios.getSelectionModel().selectedItemProperty().addListener(
+                    (observable, oldValue, newValue) -> mostrarDetalhesFuncionario(newValue));
 
-            handleAtualizarListaContrato(); // Carrega os dados iniciais
+            carregarComboBoxEnderecoFuncionario();
+            handleAtualizarListaFuncionario(); // Carrega os dados iniciais
+        }
+    }
+
+    private void mostrarDetalhesFuncionario(Funcionario funcionario) {
+        funcionarioSelecionado = funcionario;
+        if (funcionario != null) {
+            txtIdFuncionario.setText(String.valueOf(funcionario.getId()));
+            txtNomeFuncionario.setText(funcionario.getNome());
+            txtMatriculaFuncionario.setText(funcionario.getMatricula());
+            txtCpfFuncionario.setText(funcionario.getCpf());
+            cmbEnderecoFuncionario.setValue(funcionario.getEndereco());
+            // Obs: Endereço e Contatos são objetos complexos e exigem lógica adicional.
+        } else {
+            handleLimparFormularioFuncionario();
+        }
+    }
+
+    @FXML
+    private void handleSalvarFuncionario() {
+        try {
+            Funcionario funcionario = (funcionarioSelecionado == null) ? new Funcionario() : funcionarioSelecionado;
+
+            // 1. Recuperar dados do formulário
+            funcionario.setNome(txtNomeFuncionario.getText());
+            funcionario.setMatricula(txtMatriculaFuncionario.getText());
+            funcionario.setCpf(txtCpfFuncionario.getText());
+            funcionario.setEndereco(cmbEnderecoFuncionario.getSelectionModel().getSelectedItem());
+            // 2. Validação básica
+            if (funcionario.getNome() == null || funcionario.getNome().trim().isEmpty() ||
+                    funcionario.getCpf() == null || funcionario.getCpf().trim().isEmpty()) {
+                new Alert(AlertType.WARNING, "Nome e CPF são campos obrigatórios.", ButtonType.OK).show();
+                return;
+            }
+
+            // 3. Salvar ou Atualizar
+            if (funcionario.getId() == 0) {
+                funcionarioDAO.salvar(funcionario);
+                new Alert(AlertType.INFORMATION, "Funcionario salvo com sucesso!", ButtonType.OK).show();
+            } else {
+                funcionarioDAO.salvar(funcionario);
+                new Alert(AlertType.INFORMATION, "Funcionario atualizado com sucesso!", ButtonType.OK).show();
+            }
+
+            handleLimparFormularioFuncionario();
+            handleAtualizarListaFuncionario();
+
+        } catch (Exception e) {
+            new Alert(AlertType.ERROR, "Erro ao salvar/atualizar Funcionario: " + e.getMessage(), ButtonType.OK).show();
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleAtualizarListaFuncionario() {
+        List<Funcionario> lista = funcionarioDAO.buscarTodos();
+        tabelaFuncionarios.setItems(FXCollections.observableArrayList(lista));
+    }
+
+    @FXML
+    private void handleLimparFormularioFuncionario() {
+        funcionarioSelecionado = null;
+        txtIdFuncionario.setText("Gerado Automaticamente");
+        txtNomeFuncionario.setText("");
+        txtCpfFuncionario.setText("");
+        txtMatriculaFuncionario.setText("");
+        cmbEnderecoFuncionario.getSelectionModel().clearSelection();
+    }
+
+    @FXML
+    private void handleDeletarFuncionario() {
+        Funcionario funcionarioDeletar = tabelaFuncionarios.getSelectionModel().getSelectedItem();
+        if (funcionarioDeletar != null) {
+            try {
+                funcionarioDAO.excluir(funcionarioDeletar);
+                handleAtualizarListaFuncionario();
+                handleLimparFormularioFuncionario();
+                new Alert(AlertType.INFORMATION, "Funcionario excluído com sucesso!", ButtonType.OK).show();
+            } catch (Exception e) {
+                new Alert(AlertType.ERROR, "Erro ao excluir Funcionario: " + e.getMessage(), ButtonType.OK).show();
+            }
+        } else {
+            new Alert(AlertType.WARNING, "Selecione um Funcionario para deletar.", ButtonType.OK).show();
+        }
+    }
+
+    private void carregarComboBoxEnderecoFuncionario() {
+        List<Endereco> listaEnderecos = enderecoDAO.buscarTodos();
+        cmbEnderecoFuncionario.setItems(FXCollections.observableArrayList(listaEnderecos));
+
+        cmbEnderecoFuncionario.setConverter(new StringConverter<Endereco>() {
+            @Override
+            public String toString(Endereco endereco) { return endereco == null ? "" : endereco.getCep(); }
+            @Override
+            public Endereco fromString(String string) { return null; }
+        });
+    }
+
+    // USUARIOS METODOS
+
+    private void inicializarUsuarioCRUD(){
+        if (tabelaUsuarios != null) {
+            colIdUsuario.setCellValueFactory(new PropertyValueFactory<>("id"));
+            colNomeUsuario.setCellValueFactory(new PropertyValueFactory<>("nome"));
+            colCpfUsuario.setCellValueFactory(new PropertyValueFactory<>("cpf"));
+            colLoginUsuario.setCellValueFactory(new PropertyValueFactory<>("login"));
+
+            // Listener para preencher o formulário ao selecionar um cliente
+            tabelaUsuarios.getSelectionModel().selectedItemProperty().addListener(
+                    (observable, oldValue, newValue) -> mostrarDetalhesUsuario(newValue));
+
+            handleAtualizarListaUsuario(); // Carrega os dados iniciais
+        }
+    }
+
+    private void mostrarDetalhesUsuario(Usuario usuario) {
+        usuarioSelecionado = usuario;
+        if (usuario != null) {
+            txtIdUsuario.setText(String.valueOf(usuario.getId()));
+            txtNomeUsuario.setText(usuario.getNome());
+            txtLoginUsuario.setText(usuario.getLogin());
+            txtCpfUsuario.setText(usuario.getCpf());
+            txtSenhaUsuario.setText(usuario.getSenha());
+            // Obs: Endereço e Contatos são objetos complexos e exigem lógica adicional.
+        } else {
+            handleLimparFormularioUsuario();
+        }
+    }
+
+    @FXML
+    private void handleSalvarUsuario() {
+        try {
+            Usuario usuario = (usuarioSelecionado == null) ? new Usuario() : usuarioSelecionado;
+
+            // 1. Recuperar dados do formulário
+            usuario.setNome(txtNomeUsuario.getText());
+            usuario.setLogin(txtLoginUsuario.getText());
+            usuario.setCpf(txtCpfUsuario.getText());
+            usuario.setSenha(txtSenhaUsuario.getText());
+            //funcionario.setEndereco(txtLogradouroFuncionario.getText());
+
+            // 2. Validação básica
+            if (usuario.getNome() == null || usuario.getNome().trim().isEmpty() ||
+                    usuario.getCpf() == null || usuario.getCpf().trim().isEmpty()) {
+                new Alert(AlertType.WARNING, "Nome e CPF são campos obrigatórios.", ButtonType.OK).show();
+                return;
+            }
+
+            // 3. Salvar ou Atualizar
+            if (usuario.getId() == 0) {
+                usuarioDAO.salvar(usuario);
+                new Alert(AlertType.INFORMATION, "Usuario salvo com sucesso!", ButtonType.OK).show();
+            } else {
+                usuarioDAO.salvar(usuario);
+                new Alert(AlertType.INFORMATION, "Usuario atualizado com sucesso!", ButtonType.OK).show();
+            }
+
+            handleLimparFormularioUsuario();
+            handleAtualizarListaUsuario();
+
+        } catch (Exception e) {
+            new Alert(AlertType.ERROR, "Erro ao salvar/atualizar Usuario: " + e.getMessage(), ButtonType.OK).show();
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleAtualizarListaUsuario() {
+        List<Usuario> lista = usuarioDAO.buscarTodos();
+        tabelaUsuarios.setItems(FXCollections.observableArrayList(lista));
+    }
+
+    @FXML
+    private void handleLimparFormularioUsuario() {
+        usuarioSelecionado = null;
+        txtIdUsuario.setText("Gerado Automaticamente");
+        txtNomeUsuario.setText("");
+        txtCpfUsuario.setText("");
+        txtLoginUsuario.setText("");
+        txtSenhaUsuario.setText("");
+    }
+
+    @FXML
+    private void handleDeletarUsuario() {
+        Usuario usuarioDeletar = tabelaUsuarios.getSelectionModel().getSelectedItem();
+        if (usuarioDeletar != null) {
+            try {
+                usuarioDAO.excluir(usuarioDeletar);
+                handleAtualizarListaUsuario();
+                handleLimparFormularioUsuario();
+                new Alert(AlertType.INFORMATION, "Usuario excluído com sucesso!", ButtonType.OK).show();
+            } catch (Exception e) {
+                new Alert(AlertType.ERROR, "Erro ao excluir Usuario: " + e.getMessage(), ButtonType.OK).show();
+            }
+        } else {
+            new Alert(AlertType.WARNING, "Selecione um Usuario para deletar.", ButtonType.OK).show();
         }
     }
 
 
+    // CONTRATO METODOS
 
-    // =================================================================
-    // CONTRATO LOCAÇÃO (Métodos de Ação)
-    // =================================================================
+    private void inicializarContratoCRUD(){
+        if (tabelaUsuarios != null) {
+            colIdContrato.setCellValueFactory(new PropertyValueFactory<>("id"));
+            colClienteContrato.setCellValueFactory(new PropertyValueFactory<>("cliente"));
+            colUsuarioCriadorContrato.setCellValueFactory(new PropertyValueFactory<>("usuarioCriador"));
+            colDataContrato.setCellValueFactory(new PropertyValueFactory<>("DataContrato"));
+            colStatusContrato.setCellValueFactory(new PropertyValueFactory<>("status"));
+            colValorTotalContrato.setCellValueFactory(new PropertyValueFactory<>("ValorTotal"));
 
-    private void handleAtualizarComboClienteContrato() {
-        List<Cliente> clientes = clienteDAO.buscarTodos();
-        cmbClienteContrato.setItems(FXCollections.observableArrayList(clientes));
-
-        // Configura como o Cliente é exibido na ComboBox (nome + ID)
-        cmbClienteContrato.setConverter(new StringConverter<Cliente>() {
-            @Override
-            public String toString(Cliente cliente) {
-                return (cliente != null) ? cliente.getNome() + " (ID: " + cliente.getId() + ")" : "";
-            }
-
-            @Override
-            public Cliente fromString(String string) {
-                // Não é necessário implementar a conversão de String para Objeto
-                return null;
-            }
-        });
+            // Listener para preencher o formulário ao selecionar um cliente
+            tabelaContratos.getSelectionModel().selectedItemProperty().addListener(
+                    (observable, oldValue, newValue) -> mostrarDetalhesContrato(newValue));
+            configurarComboBoxClienteContrato();
+            configurarComboBoxUsuarioContrato();
+            carregarComboBoxStatusContrato();
+            handleAtualizarListaContrato(); // Carrega os dados iniciais
+        }
     }
 
-    private void mostrarDetalhesContrato(ContratoLocacao contrato) {
-        contratoSelecionado = contrato;
-        if (contrato != null) {
-            txtIdContrato.setText(String.valueOf(contrato.getId()));
-
-            // Conversão de java.util.Date para java.time.LocalDate para o DatePicker
-            dpDataContrato.setValue(contrato.getDataContrato() != null
-                    ? contrato.getDataContrato().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-                    : null);
-
-            // Formata os valores para exibição no TextField
-            txtValorCaucao.setText(String.format("%.2f", contrato.getValorCaucao()).replace(',', '.'));
-            txtValorTotalContrato.setText(String.format("%.2f", contrato.getValorTotal()).replace(',', '.'));
-
-            cmbStatusContrato.getSelectionModel().select(contrato.getStatus());
-            cmbClienteContrato.getSelectionModel().select(contrato.getCliente());
+    private void mostrarDetalhesContrato(ContratoLocacao contratoLocacao) {
+        contratoLocacaoSelecionado = contratoLocacao;
+        if (contratoLocacao != null) {
+            txtIdContrato.setText(String.valueOf(contratoLocacao.getId()));
+            cmbClienteContrato.setValue(contratoLocacao.getCliente());
+            cmbUsuarioCriadorContrato.setValue(contratoLocacao.getUsuarioCriador());
+            java.sql.Date dataDoContrato = (java.sql.Date) contratoLocacao.getDataContrato();
+            LocalDate dataContrato = dataDoContrato.toLocalDate();
+            dtpDataContrato.setValue(dataContrato);
+            txtValorCaucaoContrato.setText(String.valueOf(contratoLocacao.getValorCaucao()));
+            txtValorTotalContrato.setText(String.valueOf(contratoLocacao.getValorTotal()));
+            cmbStatusContrato.setValue(contratoLocacao.getStatus());
+            // Obs: Endereço e Contatos são objetos complexos e exigem lógica adicional.
         } else {
             handleLimparFormularioContrato();
         }
@@ -943,41 +1266,39 @@ public class MainViewController implements Initializable {
     @FXML
     private void handleSalvarContrato() {
         try {
-            ContratoLocacao contrato = (contratoSelecionado == null) ? new ContratoLocacao() : contratoSelecionado;
+            ContratoLocacao contratoLocacao = (contratoLocacaoSelecionado == null) ? new ContratoLocacao() : contratoLocacaoSelecionado;
 
             // 1. Recuperar dados do formulário
-            if (dpDataContrato.getValue() != null) {
-                // Conversão de LocalDate para java.util.Date
-                contrato.setDataContrato(Date.from(dpDataContrato.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
-            }
+            contratoLocacao.setCliente(cmbClienteContrato.getSelectionModel().getSelectedItem());
+            contratoLocacao.setUsuarioCriador(cmbUsuarioCriadorContrato.getSelectionModel().getSelectedItem());
+            String dateString = dtpDataContrato.getValue().toString(); // e.g., "2025-12-11"
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd"); // Incorrect format
+            Date dataContrato = format.parse(dateString);
+            contratoLocacao.setDataContrato(dataContrato);
+            contratoLocacao.setValorCaucao(Float.parseFloat(txtValorCaucaoContrato.getText()));
+            contratoLocacao.setValorTotal(Float.parseFloat(txtValorTotalContrato.getText()));
+            contratoLocacao.setStatus(cmbStatusContrato.getSelectionModel().getSelectedItem());
 
-            // Trata a entrada de valores, aceitando ponto ou vírgula como separador decimal
-            contrato.setValorCaucao(Float.parseFloat(txtValorCaucao.getText().trim().replace(',', '.')));
-            contrato.setValorTotal(Float.parseFloat(txtValorTotalContrato.getText().trim().replace(',', '.')));
-
-            contrato.setStatus(cmbStatusContrato.getSelectionModel().getSelectedItem());
-            contrato.setCliente(cmbClienteContrato.getSelectionModel().getSelectedItem());
 
             // 2. Validação básica
-            if (contrato.getCliente() == null || contrato.getStatus() == null || contrato.getDataContrato() == null) {
-                new Alert(AlertType.WARNING, "Cliente, Status e Data do Contrato são obrigatórios.", ButtonType.OK).show();
+            if (contratoLocacao.getCliente() == null  ||
+                    contratoLocacao.getUsuarioCriador() == null ) {
+                new Alert(AlertType.WARNING, "Usuario e Cliente são campos obrigatórios.", ButtonType.OK).show();
                 return;
             }
 
             // 3. Salvar ou Atualizar
-            if (contrato.getId() == 0) {
-                contratoLocacaoDAO.salvar(contrato);
-                new Alert(AlertType.INFORMATION, "Contrato de Locação salvo com sucesso!", ButtonType.OK).show();
+            if (contratoLocacao.getId() == 0) {
+                contratoLocacaoDAO.salvar(contratoLocacao);
+                new Alert(AlertType.INFORMATION, "Contrato salvo com sucesso!", ButtonType.OK).show();
             } else {
-                contratoLocacaoDAO.salvar(contrato);
-                new Alert(AlertType.INFORMATION, "Contrato de Locação atualizado com sucesso!", ButtonType.OK).show();
+                contratoLocacaoDAO.salvar(contratoLocacao);
+                new Alert(AlertType.INFORMATION, "Contrato atualizado com sucesso!", ButtonType.OK).show();
             }
 
             handleLimparFormularioContrato();
             handleAtualizarListaContrato();
 
-        } catch (NumberFormatException e) {
-            new Alert(AlertType.ERROR, "Erro de formato. Verifique se os campos de valor (Caução/Total) estão preenchidos corretamente (ex: 1500.50).", ButtonType.OK).show();
         } catch (Exception e) {
             new Alert(AlertType.ERROR, "Erro ao salvar/atualizar Contrato: " + e.getMessage(), ButtonType.OK).show();
             e.printStackTrace();
@@ -992,14 +1313,14 @@ public class MainViewController implements Initializable {
 
     @FXML
     private void handleLimparFormularioContrato() {
-        contratoSelecionado = null;
+        contratoLocacaoSelecionado = null;
         txtIdContrato.setText("Gerado Automaticamente");
-        dpDataContrato.setValue(null);
-        txtValorCaucao.setText("");
-        cmbStatusContrato.getSelectionModel().clearSelection();
-        txtValorTotalContrato.setText("");
         cmbClienteContrato.getSelectionModel().clearSelection();
-        tabelaContratos.getSelectionModel().clearSelection();
+        cmbUsuarioCriadorContrato.getSelectionModel().clearSelection();
+        dtpDataContrato.setValue(null);
+        txtValorCaucaoContrato.setText("");
+        txtValorTotalContrato.setText("");
+        cmbStatusContrato.getSelectionModel().clearSelection();
     }
 
     @FXML
@@ -1017,6 +1338,874 @@ public class MainViewController implements Initializable {
         } else {
             new Alert(AlertType.WARNING, "Selecione um Contrato para deletar.", ButtonType.OK).show();
         }
-    }*/
+    }
+
+    private void configurarComboBoxClienteContrato() {
+        cmbClienteContrato.setConverter(new StringConverter<Cliente>() {
+            @Override
+            public String toString(Cliente cliente) { return cliente == null ? "" : cliente.getNome(); }
+            @Override
+            public Cliente fromString(String string) { return null; }
+        });
+    }
+
+    private void configurarComboBoxUsuarioContrato() {
+        cmbUsuarioCriadorContrato.setConverter(new StringConverter<Usuario>() {
+            @Override
+            public String toString(Usuario usuario) { return usuario == null ? "" : usuario.getNome(); }
+            @Override
+            public Usuario fromString(String string) { return null; }
+        });
+    }
+
+    private void carregarComboBoxStatusContrato() {
+        List<Cliente> listaClientes = clienteDAO.buscarTodos();
+        cmbClienteContrato.setItems(FXCollections.observableArrayList(listaClientes));
+
+        List<Usuario> listaUsuarios = usuarioDAO.buscarTodos();
+        cmbUsuarioCriadorContrato.setItems(FXCollections.observableArrayList(listaUsuarios));
+
+        cmbStatusContrato.setItems(FXCollections.observableArrayList(ContratoLocacao.StatusLocacao.values()));
+    }
+
+    // Locacoes Metodos
+
+    @FXML
+    public void initializeLocacoes() {
+        configurarTabela();
+        carregarComboboxes();
+        handleAtualizarListaLocacao(null);
+
+        tabelaLocacoes.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> preencherFormulario(newValue));
+    }
+
+    private void configurarTabela() {
+        /*colIdLocacao.setCellValueFactory(new PropertyValueFactory<>("id"));
+
+        if(!tabelaLocacoes.getItems().isEmpty()) {
+            colIdLocacao.setCellValueFactory(new PropertyValueFactory<>("id"));
+
+            // Exibe o ID do Contrato
+            colContratoLocacao.setCellValueFactory(cellData ->
+                    new javafx.beans.property.SimpleObjectProperty<>(
+                            cellData.getValue().getContratoLocacao() != null ?
+                                    cellData.getValue().getContratoLocacao().getId() : null));
+
+            // Exibe a Placa do Veículo
+            colVeiculoLocacao.setCellValueFactory(cellData ->
+                    new javafx.beans.property.SimpleStringProperty(
+                            cellData.getValue().getVeiculo() != null ?
+                                    cellData.getValue().getVeiculo().getPlaca() : "N/A"));
+
+            colDataRetiradaLocacao.setCellValueFactory(new PropertyValueFactory<>("dataRetirada"));
+            colDataDevolucaoLocacao.setCellValueFactory(new PropertyValueFactory<>("dataDevolucao"));
+
+            tabelaLocacoes.setItems(listaLocacoes);
+        }*/
+        // Removido o 'if' que impedia a configuração na inicialização.
+
+        // 1. Configuração de Propriedades Diretas
+        colIdLocacao.setCellValueFactory(new PropertyValueFactory<>("id"));
+        colDataRetiradaLocacao.setCellValueFactory(new PropertyValueFactory<>("dataRetirada"));
+        colDataDevolucaoLocacao.setCellValueFactory(new PropertyValueFactory<>("dataDevolucao"));
+
+        // 2. Configuração de Propriedades Aninhadas (com verificação de null)
+
+        // Exibe o ID do Contrato
+        colContratoLocacao.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleObjectProperty<>(
+                        cellData.getValue().getContratoLocacao() != null ?
+                                cellData.getValue().getContratoLocacao().getId() : null));
+
+        // Exibe a Placa do Veículo
+        colVeiculoLocacao.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleStringProperty(
+                        cellData.getValue().getVeiculo() != null ?
+                                cellData.getValue().getVeiculo().getPlaca() : "N/A"));
+
+        // 3. Vinculação da Lista (só deve ser executada se for a primeira vez)
+        // Se esta função for chamada apenas uma vez na inicialização, esta linha está OK.
+        // Se esta função for chamada repetidamente, esta linha é redundante.
+        tabelaLocacoes.setItems(listaLocacoes);
+    }
+
+    private void carregarComboboxes() {
+        try {
+            // Buscando dados reais (ou mockados se o banco estiver vazio)
+            List<ContratoLocacao> contratoLocacaos = contratoLocacaoDAO.buscarTodos();
+            cmbContratoLocacao.setItems(FXCollections.observableArrayList(contratoLocacaos));
+
+            List<Veiculo> veiculos = veiculoDAO.buscarTodos();
+            cmbVeiculoLocacao.setItems(FXCollections.observableArrayList(veiculos));
+
+            cmbContratoLocacao.setConverter(new StringConverter<ContratoLocacao>() {
+                @Override
+                public String toString(ContratoLocacao object) {
+                    return object != null ? "Contrato #" + object.getId() : "";
+                }
+                @Override
+                public ContratoLocacao fromString(String string) { return null; }
+            });
+
+            cmbVeiculoLocacao.setConverter(new StringConverter<Veiculo>() {
+                @Override
+                public String toString(Veiculo object) {
+                    String modeloNome = (object.getModelo() != null) ? object.getModelo().getNome() : "Modelo N/A";
+
+                    // Retorna uma string que o usuário entenda (Ex: PLACA - Modelo)
+                    return object.getPlaca() + " - " + modeloNome;
+                }
+                @Override
+                public Veiculo fromString(String string) { return null; }
+            });
+        } catch (Exception e) {
+            exibirAlerta("Erro de Conexão/Dados", "Não foi possível carregar Contratos e Veículos: " + e.getMessage(), Alert.AlertType.ERROR);
+            // Em produção, você trataria melhor a falha no carregamento.
+        }
+    }
+
+    private void preencherFormulario(Locacao locacao) {
+        // 1. Limpa o formulário primeiro para evitar dados residuais
+        handleLimparFormularioLocacao(null);
+
+        if (locacao != null) {
+
+            // --- Preenchimento da Locação ---
+            txtIdLocacao.setText(String.valueOf(locacao.getId()));
+
+            // Seleção de ComboBox: O ContratoLocacao e o Veiculo DEVEM ser EAGER FETCH ou inicializados (Hibernate.initialize())
+            // antes de você passar a 'locacao' para este método, para evitar LazyInitializationException.
+            cmbContratoLocacao.getSelectionModel().select(locacao.getContratoLocacao());
+            cmbVeiculoLocacao.getSelectionModel().select(locacao.getVeiculo());
+
+            txtDataRetiradaLocacao.setText(locacao.getDataRetirada() != null ? dateFormat.format(locacao.getDataRetirada()) : "");
+            txtDataDevolucaoLocacao.setText(locacao.getDataDevolucao() != null ? dateFormat.format(locacao.getDataDevolucao()) : "");
+
+            txtValorLocacaoBase.setText(String.valueOf(locacao.getValorLocacao()));
+
+            // --- Preenchimento do Contrato ---
+            if (locacao.getContratoLocacao() != null) {
+
+                ContratoLocacao contrato = locacao.getContratoLocacao();
+
+                // ⚠️ CORREÇÃO: Conversão de data segura para evitar UnsupportedOperationException
+                if (contrato.getDataContrato() instanceof java.sql.Date) {
+                    java.sql.Date dataDoContratoSql = (java.sql.Date) contrato.getDataContrato();
+
+                    // Conversão correta de java.sql.Date para java.time.LocalDate
+                    LocalDate dataContrato = dataDoContratoSql.toLocalDate();
+
+                    dpDataContrato.setValue(dataContrato);
+                }
+                // Adicionado um ELSE caso 'dataContrato' não seja do tipo java.sql.Date (ex: java.util.Date)
+                else if (contrato.getDataContrato() instanceof java.util.Date) {
+                    java.util.Date utilDate = (java.util.Date) contrato.getDataContrato();
+                    LocalDate dataContrato = utilDate.toInstant()
+                            .atZone(ZoneId.systemDefault()) // Necessário importar java.time.ZoneId
+                            .toLocalDate();
+                    dpDataContrato.setValue(dataContrato);
+                }
+
+
+                txtValorCaucao.setText(String.valueOf(contrato.getValorCaucao()));
+            }
+        }
+    }
+
+    @FXML
+    private void handleLimparFormularioLocacao(ActionEvent event) {
+        txtIdLocacao.clear();
+        cmbContratoLocacao.getSelectionModel().clearSelection();
+        cmbVeiculoLocacao.getSelectionModel().clearSelection();
+        txtDataRetiradaLocacao.clear();
+        txtDataDevolucaoLocacao.clear();
+        txtValorLocacaoBase.clear();
+        dpDataContrato.setValue(null);
+        txtValorCaucao.clear();
+        tabelaLocacoes.getSelectionModel().clearSelection();
+    }
+
+    @FXML
+    private void handleSalvarLocacao(ActionEvent event) {
+        try {
+            if (cmbContratoLocacao.getValue() == null || cmbVeiculoLocacao.getValue() == null || txtValorLocacaoBase.getText().isEmpty()) {
+                exibirAlerta("Erro de Validação", "Preencha Contrato, Veículo e Valor Base.", Alert.AlertType.WARNING);
+                return;
+            }
+
+            Locacao locacao;
+            if (!txtIdLocacao.getText().isEmpty()) {
+                long id = Long.parseLong(txtIdLocacao.getText());
+                // Busca a entidade no banco para garantir que ela esteja "managed"
+                locacao = locacaoDAO.buscarPorId(id);
+                if (locacao == null) throw new RuntimeException("Locação não encontrada.");
+            } else {
+                locacao = new Locacao();
+            }
+
+            locacao.setContratoLocacao(cmbContratoLocacao.getValue());
+            locacao.setVeiculo(cmbVeiculoLocacao.getValue());
+            locacao.setDataRetirada(converterStringParaDate(txtDataRetiradaLocacao.getText()));
+            locacao.setDataDevolucao(converterStringParaDate(txtDataDevolucaoLocacao.getText()));
+            locacao.setValorLocacao(Float.parseFloat(txtValorLocacaoBase.getText().replace(",", ".")));
+
+            locacaoDAO.salvar(locacao); // Usa o GenericDAO
+
+            exibirAlerta("Sucesso", "Locação salva/atualizada com sucesso!", Alert.AlertType.INFORMATION);
+            handleLimparFormularioLocacao(null);
+            handleAtualizarListaLocacao(null);
+
+        } catch (NumberFormatException e) {
+            exibirAlerta("Erro de Formato", "Valor da locação inválido ou ID incorreto.", Alert.AlertType.ERROR);
+        } catch (Exception e) {
+            exibirAlerta("Erro", "Erro ao salvar Locação: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    @FXML
+    private void handleDeletarLocacao(ActionEvent event) {
+        Locacao selecionado = tabelaLocacoes.getSelectionModel().getSelectedItem();
+        if (selecionado != null) {
+            Optional<ButtonType> result = new Alert(Alert.AlertType.CONFIRMATION,
+                    "Tem certeza que deseja deletar a Locação ID: " + selecionado.getId() + "?",
+                    ButtonType.YES, ButtonType.NO).showAndWait();
+
+            if (result.isPresent() && result.get() == ButtonType.YES) {
+                try {
+                    locacaoDAO.excluir(selecionado); // Usa o GenericDAO
+                    exibirAlerta("Sucesso", "Locação deletada com sucesso!", Alert.AlertType.INFORMATION);
+                    handleLimparFormularioLocacao(null);
+                    handleAtualizarListaLocacao(null);
+                } catch (Exception e) {
+                    exibirAlerta("Erro de Exclusão", "Erro ao deletar Locação: " + e.getMessage(), Alert.AlertType.ERROR);
+                }
+            }
+        } else {
+            exibirAlerta("Seleção", "Selecione uma Locação na tabela para deletar.", Alert.AlertType.WARNING);
+        }
+    }
+
+    @FXML
+    private void handleAtualizarListaLocacao(ActionEvent event) {
+        try {
+            listaLocacoes.clear();
+            // MUDAR AQUI:
+            //listaLocacoes.addAll(locacaoDAO.buscarTodosComVeiculo()); // Usa o novo método
+            listaLocacoes.addAll(locacaoDAO.buscarTodosComRelacionamentos());
+            tabelaLocacoes.refresh();
+        } catch (Exception e) {
+            exibirAlerta("Erro", "Erro ao carregar lista de Locações: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    // --- Métodos Auxiliares ---
+    private void exibirAlerta(String titulo, String mensagem, Alert.AlertType tipo) {
+        Alert alert = new Alert(tipo);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensagem);
+        alert.showAndWait();
+    }
+
+    private Date converterStringParaDate(String dataString) {
+        if (dataString == null || dataString.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return dateFormat.parse(dataString);
+        } catch (java.text.ParseException e) {
+            exibirAlerta("Erro de Data", "Formato de data inválido. Use DD/MM/AAAA.", Alert.AlertType.ERROR);
+            return null;
+        }
+    }
+
+    // PAGAMENTO
+
+    private void initializePagamentos() {
+
+        // 1. Configurar Colunas
+        colIdPagamento.setCellValueFactory(new PropertyValueFactory<>("id"));
+        colTipoPagamento.setCellValueFactory(new PropertyValueFactory<>("tipoPagamento"));
+        colValorPagamento.setCellValueFactory(new PropertyValueFactory<>("valorTotal"));
+
+        // Coluna Contrato (Exibe o ID do Contrato)
+        colContratoPagamento.setCellValueFactory(cellData -> {
+            ContratoLocacao contrato = cellData.getValue().getContratoLocacao();
+            // Acessa o ID do Contrato
+            return new SimpleStringProperty(String.valueOf(contrato.getId()));
+        });
+
+        // 2. Preencher ComboBoxes
+        cmbTipoPagamento.getItems().addAll(Pagamento.TipoPagamento.values()); // Enum
+
+        carregarContratosParaPagamento();
+
+        // 3. Listener para seleção na Tabela
+        tabelaPagamentos.getSelectionModel().selectedItemProperty().addListener(
+                (obs, oldSelection, newSelection) -> {
+                    if (newSelection != null) {
+                        preencherFormularioPagamento(newSelection);
+                    }
+                });
+
+        // 4. Carregar dados iniciais
+        handleAtualizarListaPagamento();
+    }
+
+    // --- Métodos de Apoio ---
+
+    private void carregarContratosParaPagamento() {
+        try {
+            // Requer que o ContratoLocacaoDAO tenha um método buscarTodos() que retorna List<ContratoLocacao>
+            List<ContratoLocacao> contratos = contratoLocacaoDAO.buscarTodos();
+            cmbContratoPagamento.getItems().clear();
+            cmbContratoPagamento.getItems().addAll(contratos);
+        } catch (Exception e) {
+            exibirAlertaErro("Erro ao carregar Contratos", "Não foi possível carregar a lista de Contratos de Locação: " + e.getMessage());
+        }
+    }
+
+    private void preencherFormularioPagamento(Pagamento pagamento) {
+        txtIdPagamento.setText(String.valueOf(pagamento.getId()));
+        txtValorTotalPagamento.setText(String.valueOf(pagamento.getValorTotal()));
+        cmbTipoPagamento.setValue(pagamento.getTipoPagamento());
+
+        // Selecionar o Contrato no ComboBox:
+        // Isso pressupõe que o objeto ContratoLocacao no Pagamento tem o mesmo ID do objeto na lista do ComboBox.
+        // Se a correção do Lombok (EqualsAndHashCode.Exclude) foi feita, isso funciona.
+        cmbContratoPagamento.getSelectionModel().select(pagamento.getContratoLocacao());
+    }
+
+    // --- Métodos de Ação do FXML ---
+
+    @FXML
+    private void handleAtualizarListaPagamento() {
+        try {
+            // Usa o GenericDAO.buscarTodos() para carregar a lista
+            List<Pagamento> pagamentos = pagamentoDAO.buscarTodos();
+            listaPagamentos.setAll(pagamentos);
+            tabelaPagamentos.setItems(listaPagamentos);
+        } catch (Exception e) {
+            exibirAlertaErro("Erro de Atualização", "Não foi possível carregar a lista de pagamentos: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleSalvarPagamento() {
+        try {
+            Pagamento pagamento;
+            long id = txtIdPagamento.getText().isEmpty() ? 0 : Long.parseLong(txtIdPagamento.getText());
+
+            if (id == 0) {
+                // Novo Pagamento
+                pagamento = new Pagamento();
+            } else {
+                // Atualizar Pagamento (opcionalmente buscar para garantir que não é um objeto detached)
+                pagamento = tabelaPagamentos.getSelectionModel().getSelectedItem();
+                if (pagamento == null) {
+                    pagamento = pagamentoDAO.buscarPorId(id); // Busca no banco
+                }
+            }
+
+            // Preenche os dados
+            pagamento.setContratoLocacao(cmbContratoPagamento.getSelectionModel().getSelectedItem());
+            pagamento.setTipoPagamento(cmbTipoPagamento.getSelectionModel().getSelectedItem());
+            pagamento.setValorTotal(Float.parseFloat(txtValorTotalPagamento.getText().replace(",", ".")));
+
+            // Salva e atualiza a lista
+            pagamentoDAO.salvar(pagamento);
+            handleAtualizarListaPagamento();
+            handleLimparFormularioPagamento();
+
+            exibirAlertaSucesso("Sucesso", "Pagamento salvo com sucesso!");
+
+        } catch (NumberFormatException e) {
+            exibirAlertaErro("Erro de Formato", "O valor total deve ser um número válido.");
+        } catch (Exception e) {
+            exibirAlertaErro("Erro ao Salvar", "Não foi possível salvar o pagamento: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleLimparFormularioPagamento() {
+        txtIdPagamento.setText("");
+        txtValorTotalPagamento.setText("");
+        cmbTipoPagamento.getSelectionModel().clearSelection();
+        cmbContratoPagamento.getSelectionModel().clearSelection();
+        tabelaPagamentos.getSelectionModel().clearSelection();
+    }
+
+    @FXML
+    private void handleDeletarPagamento() {
+        Pagamento selecionado = tabelaPagamentos.getSelectionModel().getSelectedItem();
+        if (selecionado != null) {
+            try {
+                pagamentoDAO.excluir(selecionado); // Usa o método excluir do GenericDAO
+                handleAtualizarListaPagamento();
+                handleLimparFormularioPagamento();
+                exibirAlertaSucesso("Sucesso", "Pagamento excluído.");
+            } catch (Exception e) {
+                exibirAlertaErro("Erro ao Excluir", "Não foi possível excluir o pagamento: " + e.getMessage());
+            }
+        } else {
+            exibirAlertaErro("Seleção Inválida", "Por favor, selecione um pagamento na tabela para deletar.");
+        }
+    }
+
+    // Adicione um método auxiliar para exibir alertas
+    private void exibirAlertaErro(String titulo, String mensagem) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensagem);
+        alert.showAndWait();
+    }
+
+    private void exibirAlertaSucesso(String titulo, String mensagem) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensagem);
+        alert.showAndWait();
+    }
+
+    // MainViewController.java (Trecho)
+
+    private void initializeManutencao() {
+
+        // 1. Configurar Colunas
+        colIdManutencao.setCellValueFactory(new PropertyValueFactory<>("id"));
+        colDescricaoManutencao.setCellValueFactory(new PropertyValueFactory<>("descricao"));
+        colCustoManutencao.setCellValueFactory(new PropertyValueFactory<>("custo"));
+
+        // Coluna Data: Formatação customizada (Date para String)
+        colDataManutencao.setCellValueFactory(cellData -> {
+            Date data = cellData.getValue().getData();
+            if (data == null) return new SimpleStringProperty("");
+            // Converte Date para LocalDate, formata para String
+            LocalDate localDate = data.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            return new SimpleStringProperty(dateFormatter.format(localDate));
+        });
+
+        // Coluna Veículo: Exibir o ID/representação do Veículo (usaremos ID por segurança)
+        colVeiculoManutencao.setCellValueFactory(cellData -> {
+            Veiculo veiculo = cellData.getValue().getVeiculo(); //
+            // Se o Veículo tiver um campo "placa", use-o. Ex: veiculo.getPlaca()
+            return new SimpleStringProperty(veiculo != null ? String.valueOf(veiculo.getId()) : "N/A");
+        });
+
+        // 2. Carregar ComboBox (Lista de Veículos)
+        carregarVeiculosParaManutencao();
+
+        // 3. Listener para seleção na Tabela
+        tabelaManutencoes.getSelectionModel().selectedItemProperty().addListener(
+                (obs, oldSelection, newSelection) -> {
+                    if (newSelection != null) {
+                        preencherFormularioManutencao(newSelection);
+                    }
+                });
+
+        // 4. Carregar dados iniciais
+        handleAtualizarListaManutencao();
+    }
+
+    private void carregarVeiculosParaManutencao() {
+        try {
+            // Assume que VeiculoDAO.buscarTodos() retorna List<Veiculo>
+            List<Veiculo> veiculos = veiculoDAO.buscarTodos();
+            cmbVeiculoManutencao.getItems().clear();
+            cmbVeiculoManutencao.setItems(FXCollections.observableArrayList(veiculos));
+            cmbVeiculoManutencao.setConverter(new StringConverter<Veiculo>() {
+                @Override
+                public String toString(Veiculo veiculo) {
+                    if (veiculo == null) { // ⬅️ CORREÇÃO CRÍTICA
+                        return null; // ou "" ou "Selecione um Veículo"
+                    }
+                    // Assumindo que você tem os métodos getModelo() e getPlaca()
+                    // e que getModelo() retorna um objeto que tem o método getNome().
+                    return veiculo.getPlaca() + " - " + veiculo.getModelo().getNome();
+                }
+
+                @Override
+                public Veiculo fromString(String string) {
+                    return null; // Geralmente não é necessário para ComboBoxes de entidade
+                }
+            });
+        } catch (Exception e) {
+            exibirAlertaErro("Erro de Carregamento", "Não foi possível carregar a lista de Veículos: " + e.getMessage());
+        }
+    }
+
+    // MainViewController.java (Trecho)
+
+    private void preencherFormularioManutencao(Manutencao manutencao) {
+        txtIdManutencao.setText(String.valueOf(manutencao.getId()));
+        txtDescricaoManutencao.setText(manutencao.getDescricao());
+        txtCustoManutencao.setText(String.format("%.2f", manutencao.getCusto()).replace(",", "."));
+
+        // Data (Date para String)
+        if (manutencao.getData() != null) {
+            LocalDate localDate = manutencao.getData().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            txtDataManutencao.setText(dateFormatter.format(localDate));
+        } else {
+            txtDataManutencao.setText("");
+        }
+
+        // Selecionar Veículo (exige a correção @EqualsAndHashCode.Exclude no Veiculo)
+        cmbVeiculoManutencao.getSelectionModel().select(manutencao.getVeiculo());
+    }
+
+    @FXML
+    private void handleAtualizarListaManutencao() {
+        try {
+            // Se você criou um DAO customizado para JOIN FETCH:
+            // List<Manutencao> manutencoes = ((ManutencaoDAO)manutencaoDAO).buscarTodosComVeiculo();
+
+            // Usando o GenericDAO simples (pode causar LazyException se Veiculo for acessado):
+            List<Manutencao> manutencoes = manutencaoDAO.buscarTodos();
+
+            listaManutencoes.setAll(manutencoes);
+            tabelaManutencoes.setItems(listaManutencoes);
+        } catch (Exception e) {
+            exibirAlertaErro("Erro de Atualização", "Não foi possível carregar a lista de manutenções: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleSalvarManutencao() {
+        try {
+            Manutencao manutencao;
+            long id = txtIdManutencao.getText().isEmpty() ? 0 : Long.parseLong(txtIdManutencao.getText());
+
+            if (id == 0) {
+                manutencao = new Manutencao();
+            } else {
+                manutencao = tabelaManutencoes.getSelectionModel().getSelectedItem();
+                if (manutencao == null) {
+                    manutencao = manutencaoDAO.buscarPorId(id);
+                }
+            }
+
+            // Conversão de Data e Custo
+            LocalDate localDate = LocalDate.parse(txtDataManutencao.getText(), dateFormatter);
+            Date data = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            float custo = Float.parseFloat(txtCustoManutencao.getText().replace(",", "."));
+
+            // Preenche os dados
+            manutencao.setDescricao(txtDescricaoManutencao.getText());
+            manutencao.setCusto(custo);
+            manutencao.setData(data);
+            manutencao.setVeiculo(cmbVeiculoManutencao.getSelectionModel().getSelectedItem()); //
+
+            // Salva
+            manutencaoDAO.salvar(manutencao); // Usa o GenericDAO
+            handleAtualizarListaManutencao();
+            handleLimparFormularioManutencao();
+
+            exibirAlertaSucesso("Sucesso", "Manutenção salva com sucesso!");
+
+        } catch (java.time.format.DateTimeParseException e) {
+            exibirAlertaErro("Erro de Data", "A data deve estar no formato DD/MM/AAAA.");
+        } catch (NumberFormatException e) {
+            exibirAlertaErro("Erro de Formato", "O custo deve ser um número válido (Ex: 500.00).");
+        } catch (Exception e) {
+            exibirAlertaErro("Erro ao Salvar", "Não foi possível salvar a manutenção: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleLimparFormularioManutencao() {
+        txtIdManutencao.setText("");
+        txtDescricaoManutencao.setText("");
+        txtCustoManutencao.setText("");
+        txtDataManutencao.setText("");
+        cmbVeiculoManutencao.getSelectionModel().clearSelection();
+        tabelaManutencoes.getSelectionModel().clearSelection();
+    }
+
+    @FXML
+    private void handleDeletarManutencao() {
+        Manutencao selecionado = tabelaManutencoes.getSelectionModel().getSelectedItem();
+        if (selecionado != null) {
+            try {
+                manutencaoDAO.excluir(selecionado); // Usa o GenericDAO
+                handleAtualizarListaManutencao();
+                handleLimparFormularioManutencao();
+                exibirAlertaSucesso("Sucesso", "Manutenção excluída.");
+            } catch (Exception e) {
+                exibirAlertaErro("Erro ao Excluir", "Não foi possível excluir a manutenção: " + e.getMessage());
+            }
+        } else {
+            exibirAlertaErro("Seleção Inválida", "Por favor, selecione uma manutenção na tabela para deletar.");
+        }
+    }
+
+    private void initializeOcorrencias() {
+
+        // 1. Configurar Colunas
+        colIdOcorrencia.setCellValueFactory(new PropertyValueFactory<>("id"));
+        colDescricaoOcorrencia.setCellValueFactory(new PropertyValueFactory<>("descricao")); //
+        colValorOcorrencia.setCellValueFactory(new PropertyValueFactory<>("valor")); //
+
+        // Coluna Locação: Exibir o ID da Locação
+        colLocacaoOcorrencia.setCellValueFactory(cellData -> {
+            Locacao locacao = cellData.getValue().getLocacao();
+            // O JOIN FETCH garante que 'locacao' não seja um proxy sem sessão
+            return new SimpleStringProperty(locacao != null ? String.valueOf(locacao.getId()) : "N/A");
+        });
+
+        // 2. Configurar o ComboBox para exibição e prevenção de NullPointerException
+        configurarCmbLocacaoOcorrencia();
+        carregarLocacoesParaOcorrencia();
+
+        // 3. Listener para seleção na Tabela
+        tabelaOcorrencias.getSelectionModel().selectedItemProperty().addListener(
+                (obs, oldSelection, newSelection) -> {
+                    if (newSelection != null) {
+                        preencherFormularioOcorrencia(newSelection);
+                    }
+                });
+
+        // 4. Carregar dados iniciais (usando o método seguro)
+        handleAtualizarListaOcorrencia();
+    }
+
+    private void configurarCmbLocacaoOcorrencia() {
+        // Implementação do StringConverter para exibir Locação (ID + Datas) e evitar NullPointer
+        cmbLocacaoOcorrencia.setConverter(new StringConverter<Locacao>() {
+            @Override
+            public String toString(Locacao locacao) {
+                if (locacao == null) { // ⬅️ CORREÇÃO DE NULL POINTER
+                    return null;
+                }
+                // Exibe o ID da Locação e as datas
+                // Use o formato de data desejado (Datas estão como Date, ajuste a conversão se necessário)
+                return "Locação ID: " + locacao.getId();
+                // Se Locacao.toString() não tentar inicializar um campo LAZY, ele é seguro.
+            }
+
+            @Override
+            public Locacao fromString(String string) {
+                return null;
+            }
+        });
+    }
+
+    private void carregarLocacoesParaOcorrencia() {
+        try {
+            // Se Locacao tiver relacionamentos LAZY acessados no toString(), você precisará de JOIN FETCH aqui também.
+            List<Locacao> locacoes = locacaoDAO.buscarTodos();
+            cmbLocacaoOcorrencia.getItems().clear();
+            cmbLocacaoOcorrencia.getItems().addAll(locacoes);
+        } catch (Exception e) {
+            exibirAlertaErro("Erro de Carregamento", "Não foi possível carregar a lista de Locações: " + e.getMessage());
+        }
+    }
+
+    private void preencherFormularioOcorrencia(Ocorrencia ocorrencia) {
+        txtIdOcorrencia.setText(String.valueOf(ocorrencia.getId()));
+        txtDescricaoOcorrencia.setText(ocorrencia.getDescricao());
+        txtValorOcorrencia.setText(String.format("%.2f", ocorrencia.getValor()).replace(",", "."));
+
+        // Selecionar Locação
+        cmbLocacaoOcorrencia.getSelectionModel().select(ocorrencia.getLocacao());
+    }
+
+    @FXML
+    private void handleAtualizarListaOcorrencia() {
+        try {
+            // 🚨 Usa o método seguro JOIN FETCH
+            List<Ocorrencia> ocorrencias = ocorrenciaDAO.buscarTodosComLocacao();
+
+            listaOcorrencias.setAll(ocorrencias);
+            tabelaOcorrencias.setItems(listaOcorrencias);
+        } catch (Exception e) {
+            exibirAlertaErro("Erro de Atualização", "Não foi possível carregar a lista de ocorrências: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleSalvarOcorrencia() {
+        try {
+            Ocorrencia ocorrencia;
+            long id = txtIdOcorrencia.getText().isEmpty() ? 0 : Long.parseLong(txtIdOcorrencia.getText());
+
+            if (id == 0) {
+                ocorrencia = new Ocorrencia();
+            } else {
+                ocorrencia = tabelaOcorrencias.getSelectionModel().getSelectedItem();
+                if (ocorrencia == null) {
+                    // Busca por ID apenas se não houver seleção na tabela (caso de nova criação com ID preenchido)
+                    ocorrencia = ocorrenciaDAO.buscarPorId(id);
+                }
+            }
+
+            // Validação básica
+            if (cmbLocacaoOcorrencia.getSelectionModel().isEmpty()) {
+                exibirAlertaErro("Erro de Validação", "Selecione uma Locação.");
+                return;
+            }
+
+            // Conversão de Valor
+            float valor = Float.parseFloat(txtValorOcorrencia.getText().replace(",", "."));
+
+            // Preenche os dados
+            ocorrencia.setDescricao(txtDescricaoOcorrencia.getText());
+            ocorrencia.setValor(valor);
+            ocorrencia.setLocacao(cmbLocacaoOcorrencia.getSelectionModel().getSelectedItem());
+
+            // Salva
+            ocorrenciaDAO.salvar(ocorrencia);
+            handleAtualizarListaOcorrencia();
+            handleLimparFormularioOcorrencia();
+
+            exibirAlertaSucesso("Sucesso", "Ocorrência salva com sucesso!");
+
+        } catch (NumberFormatException e) {
+            exibirAlertaErro("Erro de Formato", "O valor deve ser um número válido (Ex: 100.00).");
+        } catch (Exception e) {
+            exibirAlertaErro("Erro ao Salvar", "Não foi possível salvar a ocorrência: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleLimparFormularioOcorrencia() {
+        txtIdOcorrencia.setText("");
+        txtDescricaoOcorrencia.setText("");
+        txtValorOcorrencia.setText("");
+        cmbLocacaoOcorrencia.getSelectionModel().clearSelection();
+        tabelaOcorrencias.getSelectionModel().clearSelection();
+    }
+
+    @FXML
+    private void handleDeletarOcorrencia() {
+        Ocorrencia selecionada = tabelaOcorrencias.getSelectionModel().getSelectedItem();
+        if (selecionada != null) {
+            try {
+                ocorrenciaDAO.excluir(selecionada); // Usa o GenericDAO.excluir()
+                handleAtualizarListaOcorrencia();
+                handleLimparFormularioOcorrencia();
+                exibirAlertaSucesso("Sucesso", "Ocorrência excluída.");
+            } catch (Exception e) {
+                exibirAlertaErro("Erro ao Excluir", "Não foi possível excluir a ocorrência: " + e.getMessage());
+            }
+        } else {
+            exibirAlertaErro("Seleção Inválida", "Por favor, selecione uma ocorrência na tabela para deletar.");
+        }
+    }
+
+    // MainViewController.java (Trecho de métodos)
+
+    private void initializeEndereco() {
+
+        // 1. Configurar Colunas
+        colIdEndereco.setCellValueFactory(new PropertyValueFactory<>("id"));
+        colCepEndereco.setCellValueFactory(new PropertyValueFactory<>("cep"));
+        colLogradouroEndereco.setCellValueFactory(new PropertyValueFactory<>("logradouro"));
+        colComplementoEndereco.setCellValueFactory(new PropertyValueFactory<>("complemento"));
+        colNumeroEndereco.setCellValueFactory(new PropertyValueFactory<>("numero"));
+        colReferenciaEndereco.setCellValueFactory(new PropertyValueFactory<>("referencia"));
+
+        // 2. Listener para seleção na Tabela
+        tabelaEnderecos.getSelectionModel().selectedItemProperty().addListener(
+                (obs, oldSelection, newSelection) -> {
+                    if (newSelection != null) {
+                        preencherFormularioEndereco(newSelection);
+                    }
+                });
+
+        // 3. Carregar dados iniciais
+        handleAtualizarListaEndereco();
+    }
+
+    private void preencherFormularioEndereco(Endereco endereco) {
+        txtIdEndereco.setText(String.valueOf(endereco.getId()));
+        txtCepEndereco.setText(endereco.getCep());
+        txtLogradouroEndereco.setText(endereco.getLogradouro());
+        txtComplementoEndereco.setText(endereco.getComplemento());
+        txtNumeroEndereco.setText(endereco.getNumero());
+        txtReferenciaEndereco.setText(endereco.getReferencia());
+    }
+
+    // MainViewController.java (Trecho de métodos @FXML)
+
+    @FXML
+    private void handleAtualizarListaEndereco() {
+        try {
+            // Usa o método buscarTodos do GenericDAO
+            List<Endereco> enderecos = enderecoDAO.buscarTodos();
+
+            listaEnderecos.setAll(enderecos);
+            tabelaEnderecos.setItems(listaEnderecos);
+        } catch (Exception e) {
+            exibirAlertaErro("Erro de Atualização", "Não foi possível carregar a lista de endereços: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleSalvarEndereco() {
+        try {
+            Endereco endereco;
+            long id = txtIdEndereco.getText().isEmpty() ? 0 : Long.parseLong(txtIdEndereco.getText());
+
+            if (id == 0) {
+                endereco = new Endereco();
+            } else {
+                // Tenta pegar o selecionado, ou busca no BD
+                endereco = tabelaEnderecos.getSelectionModel().getSelectedItem();
+                if (endereco == null) {
+                    endereco = enderecoDAO.buscarPorId(id);
+                }
+            }
+
+            // Preenche os dados
+            endereco.setCep(txtCepEndereco.getText());
+            endereco.setLogradouro(txtLogradouroEndereco.getText());
+            endereco.setComplemento(txtComplementoEndereco.getText());
+            endereco.setNumero(txtNumeroEndereco.getText());
+            endereco.setReferencia(txtReferenciaEndereco.getText());
+
+            // Salva
+            enderecoDAO.salvar(endereco);
+            handleAtualizarListaEndereco();
+            handleLimparFormularioEndereco();
+
+            exibirAlertaSucesso("Sucesso", "Endereço salvo com sucesso!");
+
+        } catch (NumberFormatException e) {
+            exibirAlertaErro("Erro de Formato", "O ID deve ser um número válido.");
+        } catch (Exception e) {
+            exibirAlertaErro("Erro ao Salvar", "Não foi possível salvar o endereço: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleLimparFormularioEndereco() {
+        txtIdEndereco.setText("");
+        txtCepEndereco.setText("");
+        txtLogradouroEndereco.setText("");
+        txtComplementoEndereco.setText("");
+        txtNumeroEndereco.setText("");
+        txtReferenciaEndereco.setText("");
+        tabelaEnderecos.getSelectionModel().clearSelection();
+    }
+
+    @FXML
+    private void handleDeletarEndereco() {
+        Endereco selecionado = tabelaEnderecos.getSelectionModel().getSelectedItem();
+        if (selecionado != null) {
+            try {
+                enderecoDAO.excluir(selecionado); // Usa o GenericDAO.excluir()
+                handleAtualizarListaEndereco();
+                handleLimparFormularioEndereco();
+                exibirAlertaSucesso("Sucesso", "Endereço excluído.");
+            } catch (Exception e) {
+                exibirAlertaErro("Erro ao Excluir", "Não foi possível excluir o endereço: " + e.getMessage());
+            }
+        } else {
+            exibirAlertaErro("Seleção Inválida", "Por favor, selecione um endereço na tabela para deletar.");
+        }
+    }
 
 }

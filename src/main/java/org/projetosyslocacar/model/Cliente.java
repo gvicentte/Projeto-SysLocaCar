@@ -45,11 +45,17 @@ public class Cliente {
 
     // Relacionamento Um-para-Muitos: Um Cliente pode ter Muitos Contatos (Telefones)
     // 'mappedBy' aponta para o campo 'cliente' na classe Contato.
-    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Contato> listaContatos;
 
     // Relacionamento Um-para-Muitos: Um Cliente pode ter Muitos Contratos de Locação
     // 'mappedBy' aponta para o campo 'cliente' na classe ContratoLocacao.
-    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<ContratoLocacao> listaContratos;
+
+    @Override
+    public String toString() {
+        return nome;
+    }
+
 }

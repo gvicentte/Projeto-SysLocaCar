@@ -12,10 +12,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Date;
 import java.util.List;
@@ -25,6 +22,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString(callSuper = true)
 public class Modelo {
 
     @Id
@@ -44,17 +42,21 @@ public class Modelo {
     // O lado 'dono' do relacionamento @ManyToOne sempre contém @JoinColumn
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "marca_id", nullable = false)
+    @EqualsAndHashCode.Exclude
     private Marca marca;
 
     // Relacionamento Muitos-para-Um: Muitos Modelos podem ter Uma Categoria
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "categoria_id")
+    @EqualsAndHashCode.Exclude
     private Categoria categoria;
 
     // Relacionamento Um-para-Muitos: Um Modelo tem Muitos Veículos
     // mappedBy aponta para o campo 'modelo' na classe Veiculo
     // CASCADE.ALL garante que ao salvar um Modelo, os Veiculos associados sejam salvos
     @OneToMany(mappedBy = "modelo", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Veiculo> listVeiculo;
 
     // Nota: O diagrama original tinha 'idModelo: int' e 'listModelos: List<Modelo>'

@@ -12,6 +12,7 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
@@ -38,6 +39,7 @@ public class Manutencao {
     // Relacionamento Muitos-para-Um: Muitas Manutenções pertencem a Um Veículo.
     // Manutencao é o lado dono e contém a FK
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "veiculo_id", nullable = false) // 'veiculo_id' será a chave estrangeira (FK)
+    @JoinColumn(name = "veiculo_id", nullable = false)
+    @EqualsAndHashCode.Exclude// 'veiculo_id' será a chave estrangeira (FK)
     private Veiculo veiculo;
 }
